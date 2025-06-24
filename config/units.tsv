@@ -1,1 +1,1 @@
-sample	fastq1	fastq2	md5_fastq1	md5_fastq2
+sample	library_type    lane    fastq1	fastq2	md5_fastq1	md5_fastq2
