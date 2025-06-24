@@ -1,0 +1,149 @@
+# path or URL to sample sheet in tsv format 
+# Varibles: sample, condition, replicate, included, batch and notes.
+samples: config/samples.tsv
+
+# path or URL to sequencing unit sheet in tsv format.
+# Variables: sample, library_type, lane, fastq1 fastq2, md5_fastq1 and md5fastq2
+units: config/units.tsv
+
+# path or URL to design matrix in tsv format.
+# Variables: sample, condition and additional varibles depending on experimental design.
+design: config/design_matrix.tsv
+
+# path to the results directory
+outdir: "results"
+
+# path to the log directory
+logdir: "logs"
+
+# Paths to resources files
+library_file: resources/sgRNA_library.txt
+cnv_value_file: resources/CNV_value.tsv
+
+# Here we could include essential genes and non-essential (BAGEL / Deepmap)
+essential_genes: resources/essential_genes.tsv
+non_essential_genes: resources/non_essential_genes.tsv
+
+# Conda environments
+conda_env: 
+  #qc: env/qc.yaml # Snakemake wrapper?
+  #cutadapt: env/cutadapt.yaml # Snakemake wrapper?
+  mageck: env/mageck.yaml # There is not snakemake wrapper for MAGECK
+  crisprcleanR: env/crisprcleanR.yaml # Create a conda env with R-base and CRISPRcleanR.
+  bagel2: env/bagel2.yaml # To check if there is a snakemake wrapper (long-term task)
+  hitselection: env/hitselection.yaml # To check if there is a snakemake wrapper (long-term task)
+  drugz: env/drugz.yaml # To check if there is a snakemake wrapper (long-term task)
+  vispr: env/vispr.yaml # To decide if VISPR should be included (long-term task)
+
+# Optional steps
+# CNV correction
+cnv_correction: 
+  enabled: True
+  
+  # CNV Method. Options: CRISPRcleanR, MAGECK, DEEPMAP METHOD.
+  cnv_method: "CRISPRcleanR"
+
+# Parameters
+parameters:
+
+  # Activate when UMIs are used in the sequencing procedure
+  umi_processing:
+
+    # True: UMIs processing activated
+    # False: UMIS processing deactivated
+    enabled: False
+
+    # In case UMIs processing is activated, one or two UMI pattern
+    # should be provided by their literal sequecing or regular 
+    # expressions
+    umi_pattern1: ""
+    umi_pattern2: ""
+
+  # Trimming
+  trimming:
+    adapters: ""
+
+    # To add additional parameters (cutadapt extra parameters)
+    extra: ""
+
+  #fastq_screen: To assess if contamination should be evaluated?
+
+  alignment:
+    # Count method. Options: MAGECK count, Bowtie2, STAR. (How to incorporate the last ones should be evaluated)
+    align_method: "MAGECK count"
+    
+    # Extra arguments for the aligner.
+    extra: ""
+
+  #cnv_correction: Think about how to integrate CRISPRcleanR parameters here.
+  
+  mageck_test:
+    # Extra arguments for MAGECK test.
+    extra: ""
+
+  mageck_mle:
+    # Extra arguments for MAGECK MLE.
+    extra: ""
+  
+  mageck_pathway:
+    # Extra arguments for MAGECK Pathway.
+    extra: ""
+  
+  mageck_plot:
+    # Extra arguments for MAGECK Plot. 
+    extra: ""
+
+  bagel2:
+    # Extra arguments for BAGEL2. 
+    extra: ""
+  
+  hitselection:
+    # Extra arguments for HitSelection. 
+    extra: ""
+  
+  drugz:
+    # Extra arguments for Drugz. 
+    extra: ""
+
+  qc_plots:
+    # Extra arguments for CRISPR screening quality plots generation.
+    extra: ""
+
+# Resources: Think about if resources should be specified here. Maybe just in case a cluster was 
+# used in this pipeline.
+
+resources:
+    default:
+        threads: 1
+        mem_mb:  4096
+        runtime: 10
+   
+    fastqc:
+        threads: 1
+        mem_mb:  4096
+        runtime: 10
+
+    cutadapt:
+        threads: 8
+        mem_mb:  4096
+        runtime: 10
+    
+    alignment: # To check if this MAGECK count allows multi-thread.
+        threads: 8
+        mem_mb:  4096
+        runtime: 10
+
+    cnv_correction:
+        threads: 8
+        mem_mb:  4096
+        runtime: 10
+
+    mageck_test: # To check if this function allows multi-thread.
+        threads: 8
+        mem_mb:  4096
+        runtime: 10
+
+    mageck_mle: # To check if this function allows multi-thread.
+        threads: 8
+        mem_mb:  4096
+        runtime: 10
