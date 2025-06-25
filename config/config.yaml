@@ -41,7 +41,7 @@ cnv_correction:
   enabled: True
   
   # CNV Method. Options: CRISPRcleanR, MAGECK, DEEPMAP METHOD.
-  cnv_method: "CRISPRcleanR"
+  cnv_method: ""
 
 # To choose the testing method/s to run.
 testing_method:
