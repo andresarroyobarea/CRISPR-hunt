@@ -43,6 +43,12 @@ cnv_correction:
   # CNV Method. Options: CRISPRcleanR, MAGECK, DEEPMAP METHOD.
   cnv_method: "CRISPRcleanR"
 
+# To choose the testing method/s to run.
+testing_method:
+  - mageck_rra
+  - mageck_mle
+  - bagel2
+
 # Parameters
 parameters:
 
@@ -70,7 +76,7 @@ parameters:
 
   alignment:
     # Count method. Options: MAGECK count, Bowtie2, STAR. (How to incorporate the last ones should be evaluated)
-    align_method: "MAGECK count"
+    align_method: "mageck"
     
     # Extra arguments for the aligner.
     extra: ""
