@@ -1,5 +1,5 @@
-sample	condition	replicate    included   batch   notes
-A	Control	1    True
-B	Control	2    True
-C	Disease	1    True
-D	Disease	2    True
+sample	condition	replicate   included    batch   notes
+A	Control 1   True
+B	Control 2   True
+C	Disease 1   True
+D	Disease 2   True
