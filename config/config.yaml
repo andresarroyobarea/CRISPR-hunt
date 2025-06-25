@@ -40,14 +40,13 @@ conda_env:
 cnv_correction: 
   enabled: True
   
-  # CNV Method. Options: CRISPRcleanR, MAGECK, DEEPMAP METHOD.
+  # CNV Method. Options: CRISPRcleanR  MAGECK.
   cnv_method: ""
 
 # To choose the testing method/s to run.
-testing_method:
+essentiality_methods:
   - mageck_rra
   - mageck_mle
-  - bagel2
 
 # Parameters
 parameters:
@@ -67,6 +66,11 @@ parameters:
 
   # Trimming
   trimming:
+    
+    # True: Cutadapt to remove primers (Recomended when primers are in different sequence positions)
+    # False: MAGECK count to remove primers (Recommended when primers are always in the same position) 
+    enabled: True
+
     adapters: ""
 
     # To add additional parameters (cutadapt extra parameters)
@@ -83,35 +87,40 @@ parameters:
 
   #cnv_correction: Think about how to integrate CRISPRcleanR parameters here.
   
-  mageck_test:
+  mageck_rra_test:
     # Extra arguments for MAGECK test.
     extra: ""
 
-  mageck_mle:
+  mageck_mle_test:
     # Extra arguments for MAGECK MLE.
     extra: ""
   
-  mageck_pathway:
+  # TODO: Evaluate if it should be incorporated.
+  #mageck_pathway:
     # Extra arguments for MAGECK Pathway.
-    extra: ""
+  #  extra: ""
   
-  mageck_plot:
+  # TODO: Evaluate if it should be incorporated.
+  #mageck_plot:
     # Extra arguments for MAGECK Plot. 
-    extra: ""
+  #  extra: ""
 
-  bagel2:
+  # TODO: Planned.
+  #bagel2:
     # Extra arguments for BAGEL2. 
-    extra: ""
+  #  extra: ""
   
-  hitselection:
+  # TODO: Planned.
+  #hitselection:
     # Extra arguments for HitSelection. 
-    extra: ""
+  #  extra: ""
   
-  drugz:
+  # TODO: Planned.
+  #drugz:
     # Extra arguments for Drugz. 
-    extra: ""
+  #  extra: ""
 
-  qc_plots:
+  summary_report:
     # Extra arguments for CRISPR screening quality plots generation.
     extra: ""
 
@@ -124,12 +133,12 @@ resources:
         mem_mb:  4096
         runtime: 10
    
-    fastqc:
+    qc_raw:
         threads: 1
         mem_mb:  4096
         runtime: 10
 
-    cutadapt:
+    qc_trimming:
         threads: 8
         mem_mb:  4096
         runtime: 10
@@ -144,12 +153,23 @@ resources:
         mem_mb:  4096
         runtime: 10
 
-    mageck_test: # To check if this function allows multi-thread.
+    mageck_rra_test: # To check if this function allows multi-thread.
         threads: 8
         mem_mb:  4096
         runtime: 10
 
-    mageck_mle: # To check if this function allows multi-thread.
+    mageck_mle_test: # To check if this function allows multi-thread.
         threads: 8
+        mem_mb:  4096
+        runtime: 10
+
+    # TODO: Planned
+    #bagel2_test: # To check if this function allows multi-thread.
+    #  threads: 8
+    #  mem_mb:  4096
+    #  runtime: 10
+
+    summary_report: # To check if this function allows multi-thread.
+        threads: 2
         mem_mb:  4096
         runtime: 10
