@@ -2,13 +2,18 @@ import glob
 import os
 import sys
 import pandas as pd
+from workflow.utils.common import get_samples
 from snakemake.utils import min_version
 
 # ---- Snakemake minimal version ---- #
-min_version("9.1.1") # Once the pipeline is complete, previous Snakemake versions should be checked.
+min_version(
+    "9.1.1"
+)  # Once the pipeline is complete, previous Snakemake versions should be checked.
+
 
 # ---- Read Config file ---- #
-configfile: "config.yaml"
+configfile: "config/config.yaml"
+
 
 # ---- Set up report ---- #
 # TODO: This section will cover the generation of Snakemake reports.
@@ -18,52 +23,61 @@ configfile: "config.yaml"
 # TODO: A container to define the underlying OS for each job when using the Snakemake workflow with --use-conda --use-singularity.
 # Example: container: "docker://continuumio/miniconda3"
 
-# ---- Useful functions ---- # TODO: Could they be saved in a common.smk?
-
-
-## GLOBAL FUNCIONS
-def get_resource(rule, resource) -> int:
-        '''
-        Function to parse config.yaml to retrieve computational resources for each rule. Returns an int
-        '''
-        try:
-                return config['resources'][rule][resource]
-        except KeyError:
-                print(f'Failed to get resource for {rule}/{resource}: using default parameters')
-                return config['resources']['default'][resource]
-
 
 # ----- Read samples file ---- #
+samples = config["samples"]
+sample_filters = config["sample_filters"]
 
+df_samples = pd.read_csv(samples, sep = "\t")
 
+SAMPLES = get_samples(
+    df_samples,
+    included = sample_filters.get("included", True),
+    batch = samples_filters.get("batch"),
+    condition = sample_filters.get("condition")
+)
 
 # ---- Load rules ---- #
 
+
 include: "rules/qc_raw.smk"
 
-if config["trimming"].get("enabled", False):    
+
+if config["trimming"].get("enabled", False):
+
     include: "rules/trimming.smk"
     include: "rules/qc_trimming.smk"
 
+
 include: "rules/alignment.smk"
 
-if config["cnv_correction"].get("enabled", False):    
+
+if config["cnv_correction"].get("enabled", False):
+
     include: "rules/cnv_correction.smk"
+
 
 for method in config.get("essentiality_methods", []):
     if method == "mageck_rra":
+
         include: "rules/mageck_rra_test.smk"
+
     elif method == "mageck_mle":
+
         include: "rules/mageck_mle_test.smk"
-    # TODO: Planned.
-    #elif method == "bagel2":
-    #    include: "rules/bagel2_test.smk"
+
+
+# TODO: Planned.
+# elif method == "bagel2":
+#    include: "rules/bagel2_test.smk"
+
 
 include: "rules/summary_report.smk"
+
 
 # ---- Target rules ---- #
 # TODO: This is a initial version to collect the final MAGECK RRA output but it will
 # be updated for general purposes.
 rule all:
     input:
-        "results/mageck_rra_test/gene_summary.txt"
+        "results/mageck_rra_test/gene_summary.txt",
