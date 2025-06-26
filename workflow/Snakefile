@@ -23,6 +23,8 @@ configfile: "config/config.yaml"
 # TODO: A container to define the underlying OS for each job when using the Snakemake workflow with --use-conda --use-singularity.
 # Example: container: "docker://continuumio/miniconda3"
 
+# ---- Project name ---- #
+project = config["project"]
 
 # ----- Read samples file ---- #
 samples = config["samples"]
