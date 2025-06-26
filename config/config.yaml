@@ -24,8 +24,14 @@ cnv_value_file: resources/CNV_value.tsv
 essential_genes: resources/essential_genes.tsv
 non_essential_genes: resources/non_essential_genes.tsv
 
+# Sample filtering
+sample_filters:
+  included: True
+  batch: null
+  condition: null
+
 # Conda environments
-conda_env: 
+conda_envs: 
   #qc: env/qc.yaml # Snakemake wrapper?
   #cutadapt: env/cutadapt.yaml # Snakemake wrapper?
   mageck: env/mageck.yaml # There is not snakemake wrapper for MAGECK
