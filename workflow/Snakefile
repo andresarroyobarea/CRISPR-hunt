@@ -43,7 +43,7 @@ SAMPLES = get_samples(
 include: "rules/qc_raw.smk"
 
 
-if config["trimming"].get("enabled", False):
+if config["parameters"]["trimming"].get("enabled", False):
 
     include: "rules/trimming.smk"
     include: "rules/qc_trimming.smk"
