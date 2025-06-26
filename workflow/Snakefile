@@ -1,4 +1,10 @@
+import glob
+import os
+import sys
+import pandas as pd
 from snakemake.utils import min_version
+
+# ---- Snakemake minimal version ---- #
 min_version("9.1.1") # Once the pipeline is complete, previous Snakemake versions should be checked.
 
 # ---- Read Config file ---- #
@@ -11,6 +17,25 @@ configfile: "config.yaml"
 # ---- Docker image ---- #
 # TODO: A container to define the underlying OS for each job when using the Snakemake workflow with --use-conda --use-singularity.
 # Example: container: "docker://continuumio/miniconda3"
+
+# ---- Useful functions ---- # TODO: Could they be saved in a common.smk?
+
+
+## GLOBAL FUNCIONS
+def get_resource(rule, resource) -> int:
+        '''
+        Function to parse config.yaml to retrieve computational resources for each rule. Returns an int
+        '''
+        try:
+                return config['resources'][rule][resource]
+        except KeyError:
+                print(f'Failed to get resource for {rule}/{resource}: using default parameters')
+                return config['resources']['default'][resource]
+
+
+# ----- Read samples file ---- #
+
+
 
 # ---- Load rules ---- #
 
