@@ -16,6 +16,9 @@ outdir: "results"
 # path to the log directory
 logdir: "logs"
 
+# Project name
+project: "test"
+
 # Paths to resources files
 library_file: resources/sgRNA_library.txt
 cnv_value_file: resources/CNV_value.tsv
