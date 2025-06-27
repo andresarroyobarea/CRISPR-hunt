@@ -94,6 +94,9 @@ parameters:
     # Count method. Options: MAGECK count, Bowtie2, STAR. (How to incorporate the last ones should be evaluated)
     align_method: "mageck"
     
+    # Normalization method (Only for MAGECK count)
+    norm_method: "none"
+
     # Extra arguments for the aligner.
     extra: ""
 
