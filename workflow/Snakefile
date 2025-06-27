@@ -106,4 +106,7 @@ include: "rules/summary_report.smk"
 # be updated for general purposes.
 rule all:
     input:
-        "results/mageck_rra_test/gene_summary.txt",
+        expand("results/qc_raw/{sample}/{sample}_fastqc.html", sample=SAMPLES),
+        expand("results/qc_trimming/{sample}/{sample}_trimmed_fastqc.html", sample=SAMPLES),
+        "results/mageck_rra_test/{project}_sgrna_summary.txt",
+        "results/mageck_rra_test/{project}_gene_summary.txt",
