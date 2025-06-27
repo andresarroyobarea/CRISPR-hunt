@@ -40,6 +40,20 @@ SAMPLES = get_samples(
     condition = sample_filters.get("condition")
 )
 
+# Conditions
+# Filtered samples
+df_samples_fil = df_samples[df_samples["sample"].isin(SAMPLES)]
+
+# treated samples
+treat_cond = config["parameters"]["mageck_rra_test"]["treat_cond"]
+
+# control samples
+ctrl_cond = config["parameters"]["mageck_rra_test"]["ctrl_cond"]
+
+treat_samples = df_samples_fil[df_samples_fil["condition"] == treat_cond].sort_values("replicate")["sample"].tolist()
+ctrl_samples = df_samples_fil[df_samples_fil["condition"] == ctrl_cond].sort_values("replicate")["sample"].tolist()
+
+
 # Output paths 
 norm_state = config["parameters"]["alignment"]["out_prefix"]
 
