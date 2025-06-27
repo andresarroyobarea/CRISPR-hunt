@@ -94,11 +94,20 @@ parameters:
     # Count method. Options: MAGECK count, Bowtie2, STAR. (How to incorporate the last ones should be evaluated)
     align_method: "mageck"
     
-    # Normalization method (Only for MAGECK count)
+    # Normalization method (Only for MAGECK count). Options: "none", "median", "total" and "control"
     norm_method: "none"
 
     # Extra arguments for the aligner.
     extra: ""
+
+    # sgRNA control for MAGECK count normalization.
+    sgRNA_control: ""
+
+    # Output prefix according to normalization.
+    # normalization = "none" -> "raw"
+    # normalization = "median" <- "norm_median"
+    # normalization = "control" <- "norm_ctrl"
+    out_prefix: "raw"
 
   #cnv_correction: Think about how to integrate CRISPRcleanR parameters here.
   
