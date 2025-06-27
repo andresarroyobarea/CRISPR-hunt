@@ -11,7 +11,7 @@ rule qc_trimming:
     params:
         outdir=lambda wildcards, output: os.path.dirname(output.html),
     log:
-        fastqc="logs/qc_trimming/{sample}.log",
+        "logs/qc_trimming/{sample}.log",
     benchmark:
         "benchmarks/qc_trimming/{sample}.bmk"
     wrapper:

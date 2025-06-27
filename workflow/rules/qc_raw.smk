@@ -11,7 +11,7 @@ rule qc_raw:
     params:
         outdir=lambda wildcards, output: os.path.dirname(output.html),
     log:
-        fastqc="logs/qc_raw/{sample}.log",
+        "logs/qc_raw/{sample}.log",
     benchmark:
         "benchmarks/qc_raw/{sample}.bmk"
     wrapper:
