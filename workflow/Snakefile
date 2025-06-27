@@ -35,7 +35,7 @@ df_samples = pd.read_csv(samples, sep = "\t")
 SAMPLES = get_samples(
     df_samples,
     included = sample_filters.get("included", True),
-    batch = samples_filters.get("batch"),
+    batch = sample_filters.get("batch"),
     condition = sample_filters.get("condition")
 )
 
