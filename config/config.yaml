@@ -112,6 +112,18 @@ parameters:
   #cnv_correction: Think about how to integrate CRISPRcleanR parameters here.
   
   mageck_rra_test:
+
+    # Normalization method: It should be always "none" because normalization is performed previously.
+    norm_method: "none"
+
+    # Control condition
+    ctrl_cond: "T0"
+
+    # Treatment condition
+    treat_cond: "T1"
+
+    out_prefix: "project"
+
     # Extra arguments for MAGECK test.
     extra: ""
 
