@@ -23,10 +23,11 @@ configfile: "config/config.yaml"
 # TODO: A container to define the underlying OS for each job when using the Snakemake workflow with --use-conda --use-singularity.
 # Example: container: "docker://continuumio/miniconda3"
 
-# ---- Project name ---- #
+# ---- Config and global variables ---- #
+# Project name
 project = config["project"]
 
-# ----- Read samples file ---- #
+# Samples
 samples = config["samples"]
 sample_filters = config["sample_filters"]
 
@@ -38,6 +39,15 @@ SAMPLES = get_samples(
     batch = sample_filters.get("batch"),
     condition = sample_filters.get("condition")
 )
+
+# Output paths 
+norm_state = config["parameters"]["alignment"]["out_prefix"]
+
+# Path to the count table that will be used in RRA or MLE depending on CNV correction
+if cnv_correction:
+    count_table = "results/alignment/norm_cnv_correction.counts.txt"
+else:
+    count_table = f"results/alignment/{norm_state}.counts.txt"
 
 # ---- Load rules ---- #
 
