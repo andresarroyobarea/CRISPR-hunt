@@ -181,8 +181,14 @@ parameters:
     # BAGEL2 non-essential genes.
     non_essential_genes: resources/bagel2/NEGv1.txt
 
-    # Extra BAGEL2 fc parameters.
+    # Extra BAGEL2 BF parameters.
     extra: ""
+
+  bagel2_pr:
+    
+    # Extra BAGEL2 PR parameters
+    extra: ""
+  
 
   # TODO: Planned.
   #hitselection:
@@ -244,11 +250,17 @@ resources:
         mem_mb:  4096
         runtime: 10
 
-    # TODO: Planned
-    #bagel2_test: # To check if this function allows multi-thread.
-    #  threads: 8
-    #  mem_mb:  4096
-    #  runtime: 10
+    bagel2_fc: # To check if this function allows multi-thread.
+        mem_mb:  4096
+        runtime: 10
+
+    bagel2_bf: # To check if this function allows multi-thread.
+        mem_mb:  4096
+        runtime: 10
+
+    bagel2_pr: # To check if this function allows multi-thread.
+        mem_mb:  4096
+        runtime: 10
 
     summary_report: # To check if this function allows multi-thread.
         threads: 2
