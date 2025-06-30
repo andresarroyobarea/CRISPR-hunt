@@ -53,18 +53,27 @@ ctrl_cond = config["parameters"]["mageck_rra_test"]["ctrl_cond"]
 treat_samples = df_samples_fil[df_samples_fil["condition"] == treat_cond].sort_values("replicate")["sample"].tolist()
 ctrl_samples = df_samples_fil[df_samples_fil["condition"] == ctrl_cond].sort_values("replicate")["sample"].tolist()
 
+# ---- Design matrix ---- #
+# To select filtered samples from the original desing matrix.
+design = config["design"]
+design_matrix = pd.read_csv(design, sep = "\t")
+
+design_matrix_filt = design_matrix[design_matrix["sample"].isin(SAMPLES)]
+design_matrix_filt_path = "resources/design_matrix_filtered.txt"
+design_matrix_filt.to_csv(design_matrix_filt_path, sep = "\t", index = False)
+
 
 # Output paths 
-norm_state = config["parameters"]["alignment"]["out_prefix"]
+norm_state = config["parameters"]["mageck_count_norm"]["out_prefix"]
 
 # Path to the count table that will be used in RRA or MLE depending on CNV correction
 if cnv_correction:
-    count_table = "results/alignment/norm_cnv_correction.counts.txt"
+    count_table = "results/mageck_count_norm/norm_cnv_correction.counts.txt"
 else:
-    count_table = f"results/alignment/{norm_state}.counts.txt"
+    count_table = f"results/mageck_count_norm/{norm_state}.counts.txt"
+
 
 # ---- Load rules ---- #
-
 
 include: "rules/qc_raw.smk"
 
@@ -75,7 +84,9 @@ if config["parameters"]["trimming"].get("enabled", False):
     include: "rules/qc_trimming.smk"
 
 
-include: "rules/alignment.smk"
+include: "rules/mageck_count_raw.smk"
+
+include: "rules/mageck_count_norm.smk"
 
 
 if config["cnv_correction"].get("enabled", False):
@@ -91,11 +102,12 @@ for method in config.get("essentiality_methods", []):
     elif method == "mageck_mle":
 
         include: "rules/mageck_mle_test.smk"
+    
+    elif method == "bagel2":
 
-
-# TODO: Planned.
-# elif method == "bagel2":
-#    include: "rules/bagel2_test.smk"
+        include: "rules/bagel2_fc.smk"
+        include: "rules/bagel2_bf.smk"
+        include: "rules/bagel2_pr.smk"
 
 
 include: "rules/summary_report.smk"
