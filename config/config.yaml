@@ -23,10 +23,6 @@ project: "test"
 library_file: resources/sgRNA_library.txt
 cnv_value_file: resources/CNV_value.tsv
 
-# Here we could include essential genes and non-essential (BAGEL / Deepmap)
-essential_genes: resources/essential_genes.tsv
-non_essential_genes: resources/non_essential_genes.tsv
-
 # Sample filtering
 sample_filters:
   included: True
@@ -178,10 +174,24 @@ parameters:
   #  extra: ""
 
   # TODO: Planned.
-  #bagel2:
+  bagel2_fc:
+    
+    out_prefix: "project"
+
     # Extra arguments for BAGEL2. 
-  #  extra: ""
+    extra: ""
   
+  bagel2_bf:
+    
+    # BAGEL2 essential genes.
+    essential_genes: resources/bagel2/CEGv2.txt
+
+    # BAGEL2 non-essential genes.
+    non_essential_genes: resources/bagel2/NEGv1.txt
+
+    # Extra BAGEL2 fc parameters.
+    extra: ""
+
   # TODO: Planned.
   #hitselection:
     # Extra arguments for HitSelection. 
