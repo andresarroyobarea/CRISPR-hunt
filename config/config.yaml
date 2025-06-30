@@ -90,12 +90,18 @@ parameters:
 
   #fastq_screen: To assess if contamination should be evaluated?
 
-  alignment:
-    # Count method. Options: MAGECK count, Bowtie2, STAR. (How to incorporate the last ones should be evaluated)
-    align_method: "mageck"
-    
+  # Count method. Options: MAGECK count, Bowtie2, STAR. (How to incorporate the last ones should be evaluated)
+  # So far, MAGECK is the only method.
+
+  mageck_count_raw:
+
+    # Extra arguments for the aligner.
+    extra: ""
+
+  mageck_count_norm:
+        
     # Normalization method (Only for MAGECK count). Options: "none", "median", "total" and "control"
-    norm_method: "none"
+    norm_method: "median"
 
     # Extra arguments for the aligner.
     extra: ""
@@ -214,8 +220,11 @@ resources:
         mem_mb:  4096
         runtime: 10
     
-    alignment: # To check if this MAGECK count allows multi-thread.
-        threads: 8
+    mageck_count_raw: # To check if this MAGECK count allows multi-thread.
+        mem_mb:  4096
+        runtime: 10
+    
+    mageck_count_norm: # To check if this MAGECK count allows multi-thread.
         mem_mb:  4096
         runtime: 10
 
