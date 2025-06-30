@@ -14,9 +14,9 @@ rule mageck_count_norm:
         sample_labels=",".join(SAMPLES),
         extra=config["parameters"]["mageck_count_norm"]["extra"],
     log:
-        "logs/mageck_count_norm/mageck_count_norm.log",
+        "logs/mageck_count_norm/{norm_state}_mageck_count_norm.log",
     benchmark:
-        "benchmarks/mageck_count_norm/mageck_count_norm.bmk"
+        "benchmarks/mageck_count_norm/{norm_state}_mageck_count_norm.bmk"
     shell:
         """
         mageck count --list-seq {params.library_file} \

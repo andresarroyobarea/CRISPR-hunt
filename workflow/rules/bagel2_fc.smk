@@ -7,18 +7,18 @@ rule bagel2_fc:
     conda:
         config["conda_envs"]["bagel2"],
     params:
-        out_prefix=config["parameters"]["bagel2_fc"]["out_prefix"],
+        project=config["project"],
         ctrl_samples=",".join(ctrl_samples),
         extra=config["parameters"]["bagel2_fc"]["extra"],
     log:
-        "logs/bagel2_fc/bagel2_fc.log",
+        "logs/bagel2_fc/{project}_bagel2_fc.log",
     benchmark:
-        "benchmarks/bagel2/bagel2_fc.bmk",
+        "benchmarks/bagel2/{project}_bagel2_fc.bmk",
     shell:
         """
         BAGEL.py fc \
             -i {input.count_table_raw} \
-            -o {params.out_prefix} \
+            -o {params.project} \
             -c {params.ctrl_samples} \
             {params.extra} 2> {log}
         """

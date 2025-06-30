@@ -17,9 +17,9 @@ rule mageck_rra_test:
         out_prefix=config["parameters"]["mageck_rra_test"]["out_prefix"],
         extra=config["parameters"]["mageck_rra_test"]["extra"],
     log:
-        "logs/mageck_rra_test/mageck_rra_test.log",
+        "logs/mageck_rra_test/{project}_mageck_rra_test.log",
     benchmark:
-        "benchmarks/mageck_rra_test/mageck_rra_test.bmk"
+        "benchmarks/mageck_rra_test/{project}_mageck_rra_test.bmk"
     shell:
         """
         mageck test \

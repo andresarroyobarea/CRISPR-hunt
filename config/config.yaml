@@ -137,9 +137,6 @@ parameters:
 
     # Treatment condition
     treat_cond: "T1"
-    
-    # Output prefix
-    out_prefix: "project"
 
     # Extra arguments for MAGECK test.
     # Main extra parameters: --control-sgrna, --control-gene. --paired, --variance-estimation-samples, cnv related params
@@ -153,9 +150,6 @@ parameters:
 
     # P adjust method.
     p_adj_method: "fdr" # Other values: Holm's method (holm) and pound's method (pound)
-
-    # Output prefix
-    out_prefix: "project"
 
     # Extra arguments for MAGECK MLE.
     # Main extra parameters: --control-sgrna, --control-gene, CNV related parameters, sgRNA efficiency related information.
@@ -175,8 +169,6 @@ parameters:
 
   # TODO: Planned.
   bagel2_fc:
-    
-    out_prefix: "project"
 
     # Extra arguments for BAGEL2. 
     extra: ""
