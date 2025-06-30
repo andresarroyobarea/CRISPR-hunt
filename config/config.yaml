@@ -140,7 +140,7 @@ parameters:
     out_prefix: "project"
 
     # Extra arguments for MAGECK test.
-    # Main extra parameters: --contro-sgrna, --control-gene. --paired, --variance-estimation-samples, cnv related params
+    # Main extra parameters: --control-sgrna, --control-gene. --paired, --variance-estimation-samples, cnv related params
     extra: ""
 
   mageck_mle_test:   
@@ -149,11 +149,17 @@ parameters:
     # It should be always "none" because normalization is performed previously.
     norm_method: "none"
 
+    # P adjust method.
+    p_adj_method: "fdr" # Other values: Holm's method (holm) and pound's method (pound)
+
     # Output prefix
     out_prefix: "project"
 
     # Extra arguments for MAGECK MLE.
-    extra: ""
+    # Main extra parameters: --control-sgrna, --control-gene, CNV related parameters, sgRNA efficiency related information.
+    # As permutation round is suggested to 10 but it is 2 in default, it is set as extra
+    # --no-permutation-by-group: In homegeneous sgRNA libraries as Brunello.
+    extra: "--permutation-round 10 --no-permutation-by-group"
   
   # TODO: Evaluate if it should be incorporated.
   #mageck_pathway:
