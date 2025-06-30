@@ -113,21 +113,45 @@ parameters:
   
   mageck_rra_test:
 
-    # Normalization method: It should be always "none" because normalization is performed previously.
+    # Normalization method: 
+    # It should be always "none" because normalization is performed previously.
     norm_method: "none"
 
+    # Method to calculate log2FC at gene level from sgRNA values.
+    gene_lfc_method: "median" # Other values: "mean", "alphamedian", "alphamean", "secondbest"
+
+    # P adjust method.
+    p_adj_method: "fdr" # Other values: Holm's method (holm) and pound's method (pound)
+
+    # FDR P-value threshold for RRA in gene test. Default: 0.25
+    gene_fdr_thres: 0.25 
+
+    # Remove sgRNAs whose mean value is 0 at different levels.
+    # Default: "both" to remove sgRNAs totally absent in all both groups.
+    remove_zero: "both"
+    
     # Control condition
     ctrl_cond: "T0"
 
     # Treatment condition
     treat_cond: "T1"
-
+    
+    # Output prefix
     out_prefix: "project"
 
     # Extra arguments for MAGECK test.
+    # Main extra parameters: --contro-sgrna, --control-gene. --paired, --variance-estimation-samples, cnv related params
     extra: ""
 
-  mageck_mle_test:
+  mageck_mle_test:   
+    
+    # Normalization method: 
+    # It should be always "none" because normalization is performed previously.
+    norm_method: "none"
+
+    # Output prefix
+    out_prefix: "project"
+
     # Extra arguments for MAGECK MLE.
     extra: ""
   
@@ -195,7 +219,6 @@ resources:
         runtime: 10
 
     mageck_rra_test: # To check if this function allows multi-thread.
-        threads: 8
         mem_mb:  4096
         runtime: 10
 
