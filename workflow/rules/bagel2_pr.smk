@@ -1,18 +1,18 @@
 rule bagel2_pr:
-    input: 
+    input:
         bayes_factors="results/bagel2_bf/{project}.bf",
         essential_genes=config["parameters"]["bagel2_bf"]["essential_genes"],
         non_essential_genes=config["parameters"]["bagel2_bf"]["non_essential_genes"],
     output:
         prec_recall="results/bagel2_pr/{project}-pr",
     conda:
-        config["conda_envs"]["bagel2"],
+        config["conda_envs"]["bagel2"]
     params:
         extra=config["parameters"]["bagel2_pr"]["extra"],
-    log: 
+    log:
         "logs/bagel2_pr/{project}_bagel2_pr.log",
     benchmark:
-        "benchmarks/bagel2_pr/{project}_bagel2_pr.bmk",
+        "benchmarks/bagel2_pr/{project}_bagel2_pr.bmk"
     shell:
         """
         BAGEL.py pr \
