@@ -68,7 +68,7 @@ norm_state = config["parameters"]["mageck_count_norm"]["out_prefix"]
 
 # Path to the count table that will be used in RRA or MLE depending on CNV correction
 if cnv_correction:
-    count_table = "results/mageck_count_norm/norm_cnv_correction.counts.txt"
+    count_table = "results/cnv_correction/norm_cnv_correction.counts.txt"
 else:
     count_table = f"results/mageck_count_norm/{norm_state}.counts.txt"
 

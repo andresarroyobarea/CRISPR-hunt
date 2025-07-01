@@ -111,7 +111,16 @@ parameters:
     # normalization = "control" <- "norm_ctrl"
     out_prefix: "raw"
 
-  #cnv_correction: Think about how to integrate CRISPRcleanR parameters here.
+  cnv_correction: 
+
+    # CRISPRcleanR input library
+    sgrna_library: "workflow/resources/sgRNA_libraries/processed/broadgpp-brunello-library-contents_CRISPRcleanR_prepared_2025_07_01.txt"
+    
+    # Minimal targeted genes.
+    min_target_genes:
+
+    # Extra parameters
+    extra: ""
   
   mageck_rra_test:
 
