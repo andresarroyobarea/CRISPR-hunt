@@ -7,16 +7,28 @@ rule cnv_correction:
         config["conda_envs"]["crisprcleanR"],
     params:
         sgrna_library=config["parameters"]["cnv_correction"]["sgrna_library"],
-        outdir=outdir=lambda wildcards, output: os.path.dirname(output.count_table),
-        min_reads=config["parameters"]["cnv_correction"]["min_reads"],
-        ncontrols=len(ctrl_samples),
         norm_method=config["parameters"]["cnv_correction"]["norm_method"],
+        min_reads=config["parameters"]["cnv_correction"]["min_reads"],
         min_genes=config["parameters"]["cnv_correction"]["min_genes"],
+        ncontrols=len(ctrl_samples),
         project=config["project"],
+        outdir=outdir=lambda wildcards, output: os.path.dirname(output.count_table),
         extra=config["parameters"]["cnv_correction"]["extra"],
     log:
         "logs/cnv_correction/cnv_correction.log",
     benchmark:
         "benchmarks/cnv_correction/cnv_correction.bmk",
     shell: 
-        "Rscript "
+        """
+        Rscript scripts/run_crisprcleanR.R \
+            --input {input.count_table_raw} \
+            --output {output.count_table_cnv_norm} \
+            --sgrna-library {params.sgrna_library} \
+            --norm-method {params.norm_method} \
+            --min-reads {params.min_reads} \
+            --min-genes {params.min_genes} \
+            --n-control-samples {params.ncontrols} \
+            --label {params.project} \
+            --outdir {params.outdir} \
+            {params.extra} 2> {log}
+        """
