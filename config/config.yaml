@@ -114,10 +114,21 @@ parameters:
   cnv_correction: 
 
     # CRISPRcleanR input library
-    sgrna_library: "workflow/resources/sgRNA_libraries/processed/broadgpp-brunello-library-contents_CRISPRcleanR_prepared_2025_07_01.txt"
+    sgrna_library: "resources/sgRNA_libraries/processed/broadgpp-brunello-library-contents_CRISPRcleanR_prepared_2025_07_01.txt"
     
-    # Minimal targeted genes.
-    min_target_genes:
+    # Minimal sgRNA reads: indicates the minimal number of counts that each individual sgRNA needs 
+    # to have in the controls (on average) in order to be included in the output.
+    min_reads: 30
+    
+    # Normalization method: 
+    # 1. 'ScalingByTotalReads' for scaling samples by total numbers or reads,
+    # 2. 'MedRatios' to use the median of ratios method 
+    # 3. Gene name for scaling samples by total number of reads of the guides targeting that gene.
+    norm_method: "ScalingByTotalReads"
+
+    # The minimal number of different genes that the set of sgRNAs within a region of estimated 
+    # equal logFCs should target in order for theri logFCs to be corrected
+    min_genes: 3
 
     # Extra parameters
     extra: ""
