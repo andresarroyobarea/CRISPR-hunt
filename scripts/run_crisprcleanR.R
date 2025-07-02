@@ -4,7 +4,17 @@
 pacman::p_load(argparse, dplyr, tidyverse, CRISPRcleanR)
 
 # Parse data
-
+parser <- ArgumentParser(description= 'run_crisprcleanR perform unsupervised CNV correction in CRISPR screening data.')
+parser$add_argument('--input', '-i', help = 'sgRNA raw counts file', type = "data.frame")
+parser$add_argument('--output', '-o', help = 'sgRNA CNVs corrected and normalized counts file.', type = "data.frame")
+parser$add_argument('--sgrna-library', '-lib', help = 'Library annotation used in the CRISPR screening experiment. It can be custom library or CRISPRcleanR library.', type = 'data.frame')
+parser$add_argument('--norm-method', '-n', help = 'Normalizacion method prior CNV correction.', type = "string")
+parser$add_argument('--min-reads', '-mr', help = 'Minimal number of sgRNA counts accross all samples to retain the feature', type = "numeric")
+parser$add_argument('--min-genes', '-mg', help = 'Minimal number of different genes targeted by sgRNAs in a biased segment to perform count correction.', type = "numeric")
+parser$add_argument('--n-control-samples', '-nc', help = 'Number of controls replicates to be considered in CRISPRcleanR calculations.', type = "numeric")
+parser$add_argument('--label', '-l', help = 'Label to use in results. Eg: Project name.', type = "string")
+parser$add_argument('--outdir', '-odir', help = 'Folder to save the results.', type = "string")
+parser$add_argument('--extra', '-ext', help = 'Extra parameters. Eg: DNAcopy arguments', type = "string")
 
 # Checks
 
