@@ -5,27 +5,105 @@ pacman::p_load(argparse, dplyr, tidyverse, CRISPRcleanR)
 
 # Parse data
 parser <- ArgumentParser(description= 'run_crisprcleanR perform unsupervised CNV correction in CRISPR screening data.')
-parser$add_argument('--input', '-i', help = 'sgRNA raw counts file', type = "data.frame")
-parser$add_argument('--output', '-o', help = 'sgRNA CNVs corrected and normalized counts file.', type = "data.frame")
-parser$add_argument('--sgrna-library', '-lib', help = 'Library annotation used in the CRISPR screening experiment. It can be custom library or CRISPRcleanR library.', type = 'data.frame')
-parser$add_argument('--norm-method', '-n', help = 'Normalizacion method prior CNV correction.', type = "string")
-parser$add_argument('--min-reads', '-mr', help = 'Minimal number of sgRNA counts accross all samples to retain the feature', type = "numeric")
-parser$add_argument('--min-genes', '-mg', help = 'Minimal number of different genes targeted by sgRNAs in a biased segment to perform count correction.', type = "numeric")
-parser$add_argument('--n-control-samples', '-nc', help = 'Number of controls replicates to be considered in CRISPRcleanR calculations.', type = "numeric")
-parser$add_argument('--label', '-l', help = 'Label to use in results. Eg: Project name.', type = "string")
-parser$add_argument('--outdir', '-odir', help = 'Folder to save the results.', type = "string")
-parser$add_argument('--extra', '-ext', help = 'Extra parameters. Eg: DNAcopy arguments', type = "string")
+parser$add_argument('--input', '-i', help = 'sgRNA raw counts file (TSV)', type = "character")
+parser$add_argument('--output', '-o', help = 'Output sgRNA CNVs corrected and normalized counts file.', type = "character")
+parser$add_argument('--lib-type', help = 'Custom or CRIPRcleanR default library.', type = 'character')
+parser$add_argument('--sgrna-library', help = 'sgRNA library file: "custom" or "built-in" (CRISPRcleanR)', type = 'character')
+parser$add_argument('--norm-method', help = 'Normalizacion method prior CNV correction.', type = "character")
+parser$add_argument('--min-reads', help = 'Minimal number of sgRNA counts accross all samples to retain the feature', type = "double")
+parser$add_argument('--min-genes', help = 'Minimal number of different genes targeted by sgRNAs in a biased segment to perform count correction.', type = "double")
+parser$add_argument('--n-control-samples', help = 'Number of controls replicates to be considered in CRISPRcleanR calculations.', type = "double")
+parser$add_argument('--label', help = 'Label to use in results. Eg: Project name.', type = "character")
+parser$add_argument('--outdir', help = 'Folder to save the results.', type = "character")
+parser$add_argument('--extra', help = 'Extra parameters. Eg: DNAcopy arguments', type = "character")
 
-# Checks
+args <- parser$parse_args()
+
+# Extract args
+input_file <- args$input
+norm_cnv_counts <- args$output
+lib_type <- args$library_type
+sgrna_lib <- args$sgrna_library
+norm_method <- args$norm_method
+min_reads <- args$min_reads
+min_genes <- args$min_genes
+n_control <- args$n_controls
+label <- args$project
+outdir <- args$outdir
+extra <- args$extra
 
 
+# Import raw counts.
+raw_counts <- read.delim(input_file, sep = "\t", header = TRUE, row.names = FALSE)
 
+if (c("sgRNA", "gene") != colnames(raw_counts)[1:2]){
+    stop(paste0("Count file must have 'sgRNA' and 'gene' as the first two columns."))
+}
 
+# Import library file or load CRISPRcleanR library
+# 1. CHECK LIBRARY FILE FORMAT.
+if (lib_type == "custom") {
 
+    # Load user-provider custom library
+    message("Using custom library": sgrna_lib)
 
+    # Import KY_Library_v1.0 for further checkings.
+    ky_library <- get(data(KY_Library_v1.0))
 
+    # TODO: Chequear si tenemos los sgRNAs ids como rownames y como columna CODE.
+    lib_file = read.csv(sgrna_lib, sep = "\t", header = TRUE) 
 
+    # Validate format matches KY_Library_v1.0.
+    required_cols = c("CODE", "GENES", "EXONE", "CHRM", "STRAND", "STARTpos", "ENDpos", "seq")
+    if (all(required_cols != colnames(ky_library)){
+        stop(paste0(
+            "Error: Custom library must follow the KY_Library_v1.0 format and have columns:" required_cols,
+        ))
+    }
+    
+} else {
 
+    # Load built-in library
+    message("Using internal CRISPRcleanR library: ", sgrna_lib)
+
+    lib_file <- get(data(sgrna_lib))
+
+}
+
+# 2. CHECK sgRNA duplicates.
+dup_sgrna_ids <- lib_file$CODE[duplicated(lib_file$CODE)]
+
+if length(dup_sgrna_ids) > 0 {
+
+    # Filter sgRNA IDs duplicated records
+    dup_rows <- s2 %>% filter(CODE %in% dup_ids)
+
+    # Verify if sgRNA sequence is similar in duplicated cases (real duplicates) or
+    # only the ID is duplicate (false duplicate).
+    # sgRNA with same ID.
+    incons_sgrna_ids <- dup_rows %>%
+        group_by(CODE) %>%
+        summarise(n_unique_seq = n_distinct(seq)) %>%
+        filter(n_unique_seq > 1) %>%
+        pull(CODE)
+    
+    # Report sgRNA with the same ID and different sequence to check them
+    if (length(incons_sgrna_ids) > 0) {
+        stop(paste0(
+            "Error: Next sgRNA IDs are duplicated with different sgRNA sequence:",
+            paste(incons_sgrna_ids, collapse = ","), ".", "Please, check your library sgRNA IDs.")
+            )
+    } else {
+        message("Warning: There are duplicated sgRNA IDs with the same sequence. The first record was preserved.")
+
+        lib_file <- lib_file[!duplicated(lib_file$CODE), ]
+    }
+
+    
+
+} else {
+    message("There were not duplicate sgRNA IDs - OK!")
+}
 
 
 
