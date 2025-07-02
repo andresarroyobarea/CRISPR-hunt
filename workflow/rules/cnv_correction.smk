@@ -6,6 +6,7 @@ rule cnv_correction:
     conda:
         config["conda_envs"]["crisprcleanR"],
     params:
+        library_type=config["parameters"]["cnv_correction"]["library_type"],
         sgrna_library=config["parameters"]["cnv_correction"]["sgrna_library"],
         norm_method=config["parameters"]["cnv_correction"]["norm_method"],
         min_reads=config["parameters"]["cnv_correction"]["min_reads"],
@@ -23,6 +24,7 @@ rule cnv_correction:
         Rscript scripts/run_crisprcleanR.R \
             --input {input.count_table_raw} \
             --output {output.count_table_cnv_norm} \
+            --lib-type {params.library_type} \
             --sgrna-library {params.sgrna_library} \
             --norm-method {params.norm_method} \
             --min-reads {params.min_reads} \

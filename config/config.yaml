@@ -111,7 +111,10 @@ parameters:
     # normalization = "control" <- "norm_ctrl"
     out_prefix: "raw"
 
-  cnv_correction: 
+  cnv_correction:
+
+    # Library type: "custom" or "built-in" (CRISPRcleanR)
+    library_type: "custom"
 
     # CRISPRcleanR input library
     sgrna_library: "resources/sgRNA_libraries/processed/broadgpp-brunello-library-contents_CRISPRcleanR_prepared_2025_07_01.txt"
@@ -130,7 +133,7 @@ parameters:
     # equal logFCs should target in order for theri logFCs to be corrected
     min_genes: 3
 
-    # Extra parameters
+    # Extra parameters: They could be DNAcopy parameters.
     extra: ""
   
   mageck_rra_test:
