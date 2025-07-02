@@ -21,13 +21,13 @@ args <- parser$parse_args()
 
 # Extract args
 input_file <- args$input
-norm_cnv_counts <- args$output
+output_file <- args$output
 lib_type <- args$library_type
 sgrna_lib <- args$sgrna_library
 norm_method <- args$norm_method
 min_reads <- args$min_reads
 min_genes <- args$min_genes
-n_control <- args$n_controls
+n_controls <- args$n_controls
 label <- args$project
 outdir <- args$outdir
 extra <- args$extra
@@ -122,20 +122,20 @@ if length(dup_sgrna_ids) > 0 {
 
 # 1. Normalisation of sgRNA and fold change computation.
 norm_and_logfcs <- ccr.NormfoldChanges(
-    filename = , 
-    libraryAnnotation = , 
-    min_reads =  , 
-    EXPname = , 
+    filename = input_file, 
+    libraryAnnotation = lib_file, 
+    min_reads =  min_reads, 
+    EXPname = label, 
     saveToFig = TRUE, 
-    outdir =  ,
-    ncontrols = , 
-    method = )
+    outdir =  outdir,
+    ncontrols = n_controls, 
+    method = norm_method)
 
 
 # 2. Genomic sorting of sgRNA's log fold changes
 mapped_logfcs <- ccr.logFCs2chromPos(
     foldchanges = norm_and_logfcs[["logFCs"]],
-    libraryAnnotation = 
+    libraryAnnotation = lib_file
 )
 
 # Este output se podría guardar también.
@@ -143,10 +143,10 @@ mapped_logfcs <- ccr.logFCs2chromPos(
 # 3. Unsupervised identification and correction of gene independent cell responses to CRISPR-Cas9 targeting.
 corrected_fcs <- ccr.GWclean(
     gwSortedFCs = mapped_logfcs,
-    label = # Project name: Parameter,
-    saveTO = # Outdir for results,
-    ignoredGenes = # BAGEL2 known essential genes? RIbosomal?
-    min.ngenes = 	
+    label = label, 
+    saveTO = outdir,
+    # ignoredGenes = # BAGEL2 known essential genes? RIbosomal? So far, not included.
+    min.ngenes = min_genes
 )
 
 # El resto de parametros de la función previa se dejan por defecto.
@@ -154,21 +154,15 @@ corrected_fcs <- ccr.GWclean(
 
 # 4. Correction of sgRNA counts for gene independent responses to CRISPR-Cas9 targeting.
 corrected_counts <- ccr.correctCounts(
-    CL = , # Nombre del proyecto,
+    CL = label, # Nombre del proyecto,
     normalised_counts = norm_and_logfcs[["norm_counts"]],
     correctedFCs_and_segments = corrected_fcs,
-    libraryAnnotation = ,
-    minTargetedGenes = # Parameter min_genes,
-    OutDir = # parameter outdir,
-    ncontrols = # Parameter n_controls
+    libraryAnnotation = lib_file,
+    minTargetedGenes = min_genes,
+    OutDir = outdir,
+    ncontrols = n_controls
 )
 
-write.csv(corrected_counts, , sep = "\t", rownames = FALSE, quote = FALSE)
+write.csv(corrected_counts, output_file, sep = "\t", rownames = FALSE, quote = FALSE)
 
-
-
-
-# Guardar fichero final para mapear la regla de Snakemake
-
-
-
+# TODO: Añadir gráficos de calidad post CRISPRcleanR.
