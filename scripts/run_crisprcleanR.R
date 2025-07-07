@@ -106,7 +106,6 @@ if length(dup_sgrna_ids) > 0 {
 }
 
 
-
 # Run CRISPRcleanR
 
 # IMPORTANT: 
@@ -163,6 +162,5 @@ corrected_counts <- ccr.correctCounts(
     ncontrols = n_controls
 )
 
+# Export CNV corrected and normalized counts.
 write.csv(corrected_counts, output_file, sep = "\t", rownames = FALSE, quote = FALSE)
-
-# TODO: Añadir gráficos de calidad post CRISPRcleanR.
