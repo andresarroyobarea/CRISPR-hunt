@@ -55,6 +55,7 @@ cnv_correction:
 essentiality_methods:
   - mageck_rra
   - mageck_mle
+  - bagel
 
 # Parameters
 parameters:
@@ -135,6 +136,11 @@ parameters:
 
     # Extra parameters: They could be DNAcopy parameters.
     extra: ""
+  
+  cnv_correction_qc:
+    
+    # Paramter to select lfc from positive or negative selection.
+    selection_type: "negative"
   
   mageck_rra_test:
 
