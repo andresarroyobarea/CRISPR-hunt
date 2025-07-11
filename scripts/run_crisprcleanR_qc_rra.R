@@ -3,6 +3,34 @@
 # Libraries
 pacman::p_load(argparse, dplyr, tidyverse, tibble, CRISPRcleanR)
 
+# Utility functions
+plot_qc_curves <- function(feature_lfc, label) {
+
+    """
+    Function to plot ROC and Precision/Recall 
+    curves from CRISPRcleanR results
+    """
+
+    # ROC curve
+    ccr.ROC_Curve(
+        FCsprofile = feature_lfc,
+        positives = bagel2_essentials,
+        negatives = bagel2_non_essentials,
+        display = FALSE,
+        FDRth = 0.05,
+        expName = label)
+
+    # Precision/Recall curve
+    ccr.PrRc_Curve(
+        FCsprofile = feature_lfc,
+        positives = bagel2_essentials,
+        negatives = bagel2_non_essentials,
+        display = FALSE,
+        FDRth = 0.05, # Turn this parameter into an option?
+        expName = label)
+
+}
+
 # Parse data
 # Parse data
 parser <- ArgumentParser(description= 'run_crisprcleanR_QC perform QC in CRISPRcleanR CNV corrected data.')
@@ -27,6 +55,24 @@ selection_type <- args$selection_type
 essential_genes <- args$essential_genes
 non_essential_genes <- args$non_essential_genes
 label <- args$label
+
+# CRISPRcleanR custom data
+# Essential gene sets
+data(EssGenes.ribosomalProteins)
+data(EssGenes.DNA_REPLICATION_cons)
+data(EssGenes.KEGG_rna_polymerase)
+data(EssGenes.PROTEASOME_cons)
+data(EssGenes.SPLICEOSOME_cons)
+
+# Chequear si hay versiones nuevas y más actualizadas de estos genes
+core_fitness_genes <- list(
+    Ribosomal_Proteins=EssGenes.ribosomalProteins,
+    DNA_Replication = EssGenes.DNA_REPLICATION_cons,
+    RNA_polymerase = EssGenes.KEGG_rna_polymerase,
+    Proteasome = EssGenes.PROTEASOME_cons,
+    Spliceosome = EssGenes.SPLICEOSOME_cons,
+    CFE = bagel2_essentials,
+    non_essential = bagel2_non_essentials)
 
 # Import sgRNA and gene summaries.
 sgrna_input <- read.delim(sgrna_summ, sep = "\t", header = TRUE, row.names = FALSE)
@@ -72,6 +118,7 @@ if (selection_type == "negative") {
 
 }
 
+
 # BAGEL2 essential genes.
 bagel2_essentials <- essential_genes %>% select(GENE) %>% pull()
 bagel2_essentials <- ccr.genes2sgRNAs(lib_file, bagel2_essentials)
@@ -81,73 +128,29 @@ bagel2_non_essentials <- non_essential_genes %>% select(GENE) $>% pull()
 bagel2_non_essentials <- ccr.genes2sgRNAs(lib_file, bagel2_non_essentials)
 
 
-# Essential gene sets
-data(EssGenes.ribosomalProteins)
-data(EssGenes.DNA_REPLICATION_cons)
-data(EssGenes.KEGG_rna_polymerase)
-data(EssGenes.PROTEASOME_cons)
-data(EssGenes.SPLICEOSOME_cons)
-
-# Chequear si hay versiones nuevas y más actualizadas de estos genes
-core_fitness_genes <- list(
-    Ribosomal_Proteins=EssGenes.ribosomalProteins,
-    DNA_Replication = EssGenes.DNA_REPLICATION_cons,
-    RNA_polymerase = EssGenes.KEGG_rna_polymerase,
-    Proteasome = EssGenes.PROTEASOME_cons,
-    Spliceosome = EssGenes.SPLICEOSOME_cons,
-    CFE = bagel2_essentials,
-    non_essential = bagel2_non_essentials)
-
-
 # ---- Run CRISPRcleanR QC ---- #
 pdf(output_file)
 
-# --- ROC curve --- #
-# sgRNA lebel
-ccr.ROC_Curve(
-    FCsprofile = sgrna_lfc,
-    positives = bagel2_essentials,
-    negatives = bagel2_non_essentials,
-    display = FALSE,
-    FDRth = 0.05,
-    expName = label)
+if (exits("sgrna_lfc")) {
 
-# gene level
-ccr.ROC_Curve(
-    FCsprofile = gene_lfc,
-    positives = bagel2_essentials,
-    negatives = bagel2_non_essentials,
-    display = FALSE,
-    FDRth = 0.05,
-    expName = label)
+    # Run ROC and Precision/Recall curves if sgRNA LFC file exists
+    plot_qc_curves(sgrna_lfc, paste0(label, " (sgRNA-level)"))
+}
 
-# ---- Precision/Recal Curve ---- #
-# sgRNA lebel
-ccr.ROC_Curve(
-    FCsprofile = sgrna_lfc,
-    ositives = bagel2_essentials,
-    negatives = bagel2_non_essentials,
-    display = FALSE,
-    FDRth = 0.05,
-    expName = label)
+if (exists("gene_lfc")) {
 
-# gene level
-ccr.ROC_Curve(
-    FCsprofile = gene_lfc,
-    positives = bagel2_essentials,
-    negatives = bagel2_non_essentials,
-    display = FALSE,
-     FDRth = 0.05,
-     expName = label)
+    # Run ROC and Precision/Recall curves if sgRNA LFC file exists
+    plot_qc_curves(gene_lfc, paste0(label, " (gene-level)"))
 
-# ---- Depletion profile and recall computation ---- #
-ccr.VisDepAndSig(
-    FCsprofile = gene_lfc,
-    SIGNATURES = core_fitness_genes,
-    TITLE = label,
-    pIs = 6,
-    nIs = 7,
-    plotFCprofile = TRUE)
+    # Depletion profile at gene level
+    ccr.VisDepAndSig(
+        FCsprofile = gene_lfc,
+        SIGNATURES = core_fitness_genes,
+        TITLE = label,
+        pIs = 6,
+        nIs = 7,
+        plotFCprofile = TRUE)
+}
 
 dev.off()
 
