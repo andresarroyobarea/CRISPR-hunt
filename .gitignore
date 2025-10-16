@@ -1,6 +1,5 @@
 # Logs, temp and binary files.
 *.log
-*.out
 *.RData
 *.Rhistory
 *.Rproj
