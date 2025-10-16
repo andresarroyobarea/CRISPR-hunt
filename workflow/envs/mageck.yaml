@@ -1,0 +1,7 @@
+name: mageck
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - mageck=0.5.9.5
