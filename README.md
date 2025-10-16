@@ -1,9 +1,8 @@
 # CRISPR-hunt: A modular pipeline for CRISPR screening analysis
 
-**Work in Progress**: This is an early prototype of the CRISPR-Flow pipeline.
+**Work in Progress**: This is an early prototype of the CRISPR-hunt pipeline.
 
-**CRISPR-hunt** is an open-source pipeline designed to perform comprehensive analysis of CRISPR-based screening experiments — including knockout, activation, and interference screens.  
-It integrates multiple tools for quality control, hit calling, and downstream functional analysis.
+**CRISPR-hunt** is an open-source pipeline designed to perform comprehensive analysis of CRISPR-based screening experiments — including knockout, activation, and interference screens. It integrates multiple tools for quality control, hit calling, and downstream functional analysis.
 
 ## Features
 
