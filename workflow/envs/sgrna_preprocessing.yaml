@@ -1,0 +1,12 @@
+name: sgrna_preprocessing
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-base=4.4.3
+  - r-argparse=2.2.5 
+  - r-dplyr=1.1.4
+  - r-pacman=0.5.1
+  - r-tidyverse=2.0.0
+  - r-glue=1.8.0
