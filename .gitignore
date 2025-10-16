@@ -33,3 +33,4 @@ scripts_extras/crispr_hunt_data_preprocessing/sgRNA_library/brunello/raw/
 scripts_extras/crispr_hunt_data_preprocessing/renv/
 workflow/resources/genomes/
 workflow/resources/network_files/STRING/raw
+.Rproj.user
