@@ -1,0 +1,31 @@
+# Logs, temp and binary files.
+*.log
+*.out
+*.RData
+*.Rhistory
+*.Rproj
+*.Rproj.user/
+*.tmp
+*.gz
+*.zip
+*.tar
+*.fq
+*.fastq
+*.fastq.gz
+*.bam
+*.sam
+*.bai
+*.docx
+*.xlsx
+
+# Folders
+benchmarks/
+logs/
+data/
+notebooks/
+references/
+reports/
+results/
+test_runs/
+workflow/resources/genomes/
+workflow/resources/network_files/STRING/raw
