@@ -2,6 +2,7 @@
 *.log
 *.RData
 *.Rhistory
+*.Rprofile
 *.Rproj
 *.Rproj.user/
 *.tmp
@@ -16,6 +17,7 @@
 *.bai
 *.docx
 *.xlsx
+*.lock
 
 # Folders
 benchmarks/
@@ -25,6 +27,9 @@ notebooks/
 references/
 reports/
 results/
+.snakemake/
 test_runs/
+scripts_extras/crispr_hunt_data_preprocessing/sgRNA_library/brunello/raw/
+scripts_extras/crispr_hunt_data_preprocessing/renv/
 workflow/resources/genomes/
 workflow/resources/network_files/STRING/raw
