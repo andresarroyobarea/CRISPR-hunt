@@ -120,6 +120,7 @@ def gencode_parsing(genecodefile,chrlist=["chr1","chr2","chr3","chr4","chr5","ch
 			if featuretype=='exon':
 				gene=""
 				transcript=""
+				support_lv = 6
 				for tag in tags:
 					if tag[0] == 'gene_name':#'gene_id':
 						gene=tag[1].split(".")[0]
@@ -129,8 +130,10 @@ def gencode_parsing(genecodefile,chrlist=["chr1","chr2","chr3","chr4","chr5","ch
 						exon = int(tag[1])
 					elif tag[0] == 'transcript_support_level':
 						if tag[1]=='NA':
-							tag[1] = 6  # treat as max to ignore
-						support_lv = int(tag[1])
+							#tag[1] = 6  # treat as max to ignore
+							support_lv = 6
+						else:
+							support_lv = int(tag[1])
 				if support_lv == 6:
 					continue
 				if transcript not in transcript2exon:
@@ -140,6 +143,7 @@ def gencode_parsing(genecodefile,chrlist=["chr1","chr2","chr3","chr4","chr5","ch
 			elif featuretype == 'transcript':
 				gene=""
 				transcript=""
+				support_lv = 6
 				for tag in tags:
 					if tag[0] == 'gene_name':#'gene_id':
 						gene=tag[1].split(".")[0]
@@ -149,8 +153,10 @@ def gencode_parsing(genecodefile,chrlist=["chr1","chr2","chr3","chr4","chr5","ch
 						exon = int(tag[1])
 					elif tag[0] == 'transcript_support_level':
 						if tag[1]=='NA':
-							tag[1] = 6  # treat as max to ignore
-						support_lv = int(tag[1])
+							#tag[1] = 6  # treat as max to ignore
+							support_lv = 6
+						else:
+							support_lv = int(tag[1])
 					if tag[0] == 'tag' and 'appris_principal' in tag[1]:
 						transcript2type[transcript] = tag[1]
 				if support_lv == 6:
