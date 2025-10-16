@@ -285,4 +285,8 @@ In summary, this genome build provides an accurate and up-to-date reference for 
 	- Gene symbol harmonization: updated all gene symbols to match Brunello CRISPR library nomenclature, following the same mapping and curation logic applied during library preprocessing.
   - Description: High-confidence, curated human protein–protein interaction network compatible with BAGEL2 analysis. Number of protein interactions: 235,606
   - Generation Date: 2025-10-15
-  
+
+### design_matrix
+- **design_matrix_filtered.txt**
+
+  - Description: Design matrix used by MAGECK-MLE filtered according to use specifications. This file is a template for further use.
