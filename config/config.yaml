@@ -1,0 +1,339 @@
+# path or URL to sample sheet in tsv format 
+# Varibles: sample, condition, replicate, included, batch and notes.
+samples: config/samples.tsv
+
+# path or URL to sequencing unit sheet in tsv format.
+# Variables: sample, library_type, lane, fastq1 fastq2, md5_fastq1 and md5fastq2
+units: config/units.tsv
+
+# path or URL to design matrix in tsv format.
+# Variables: sample, condition and additional varibles depending on experimental design.
+design: config/design_matrix.tsv
+
+# path to the results directory
+outdir: "results"
+
+# path to the log directory
+logdir: "logs"
+
+# Project name
+project: "RICHTER_CRISPRscreen"
+
+# Paths to resources files
+library_file: workflow/resources/sgRNA_libraries/processed/broadgpp-brunello-library-contents_MAGECK_prepared_2025_07_23.txt
+cnv_value_file: workflow/resources/CNV_value.tsv
+deepmap_core_essentials:  workflow/resources/deepmap/CRISPRInferredCommonEssentials_2025_08_08.csv
+achilles_common_essentials: workflow/resources/deepmap/AchillesCommonEssentialControls_2025_08_08.csv
+achilles_non_essentials: workflow/resources/deepmap/AchillesNonessentialControls_2025_08_08.csv
+
+# Sample filtering
+sample_filters:
+  included: True
+  batch: null
+  condition: null
+
+# Snakemake wrappers:
+wrapper:
+  qc: "v7.2.0/bio/fastqc"
+  trimming: "v7.2.0/bio/cutadapt/se"
+  multiqc: "v7.2.0/bio/multiqc"
+
+# Conda environments --> solucionar las rutas absoluta
+conda_envs: 
+  mageck: /home/andres/Escritorio/bioinfo_hematology_unit/crispr_hunt/workflow/envs/mageck.yaml
+  sgrna_prepr: /home/andres/Escritorio/bioinfo_hematology_unit/crispr_hunt/workflow/envs/sgrna_preprocessing.yaml
+  crisprcleanR: /home/andres/Escritorio/bioinfo_hematology_unit/crispr_hunt/workflow/envs/crispr_cleanr.yaml 
+  bagel2: /home/andres/Escritorio/bioinfo_hematology_unit/crispr_hunt/workflow/envs/bagel2.yaml 
+  #hitselection: env/hitselection.yaml # To check if there is a snakemake wrapper (long-term task)
+  #drugz: env/drugz.yaml # To check if there is a snakemake wrapper (long-term task)
+
+# Optional steps
+# CNV correction
+cnv_correction: 
+  
+  enabled: True
+  
+  # CNV Method. Options: CRISPRcleanR  MAGECK.
+  cnv_method: "CRISPRcleanR"
+
+# This represent the different normalization status for MAGECK.
+# norm_cnv_correction should be addedd ONLY when cnv_correction["enabled"] = True
+mageck_norms:  # norm_state
+  - control
+  
+# This represent the different normalization status for MAGECK.
+# norm_cnv_correction should be addedd ONLY when cnv_correction["enabled"] = True
+bagel2_norms:
+  - cnvcorr
+
+# To choose the testing method/s to run.
+essentiality_methods:
+  - mageck_rra
+  - mageck_mle
+
+# Parameters
+parameters:
+
+  qc:
+
+    extra: "--adapters workflow/resources/trimming/adapter_list.txt"
+
+  # Activate when UMIs are used in the sequencing procedure
+  umi_processing:
+
+    # True: UMIs processing activated
+    # False: UMIS processing deactivated
+    enabled: False
+
+    # In case UMIs processing is activated, one or two UMI pattern
+    # should be provided by their literal sequecing or regular 
+    # expressions
+    umi_pattern1: ""
+    umi_pattern2: ""
+
+  # Trimming
+  trimming:
+    
+    # True: Cutadapt to remove primers (Recomended when primers are in different sequence positions)
+    # False: MAGECK count to remove primers (Recommended when primers are always in the same position) 
+    enabled: True
+    
+    adapters: "-g TGTGGAAAGGACGAAACACCG...GTTTTAGAGCTAGAAATAGCAAG"
+
+    # To add additional parameters (cutadapt extra parameters)
+    extra: "-Z --discard-untrimmed"
+
+  #fastq_screen: To assess if contamination should be evaluated?
+
+  # Count method. Options: MAGECK count, Bowtie2, STAR. (How to incorporate the last ones should be evaluated)
+  # So far, MAGECK is the only method.
+  
+  mageck_count_raw:
+    
+    extra: ""
+
+
+  filter_sgrna_counts:
+
+    min_avg_abund: 30
+    
+    extra: ""
+
+  mageck_normalize:
+
+  # Parameters for median normalization in MAGECK  
+    median: 
+  
+      norm_method: "median"
+
+      extra: ""
+
+  # Parameters for negative control normalization in MAGECK
+    control:
+
+      norm_method: "control"
+
+      extra: "--control-sgrna workflow/resources/sgRNA_libraries/processed/broadgpp-brunello-library-BAGEL2_neg_ctrl_sgrna_2025_07_23.txt"
+  
+  # Parameters for negative total normalization in MAGECK
+    total:
+
+      norm_method: "total"
+
+      extra: ""
+  
+  cnv_correction:
+
+    # Library type: "custom" or "built-in" (CRISPRcleanR)
+    library_type: "custom"
+
+    # CRISPRcleanR input library
+    sgrna_library: "workflow/resources/sgRNA_libraries/processed/broadgpp-brunello-library-contents_CRISPRcleanR_prepared_2025_07_01.txt"
+    
+    # Minimal sgRNA reads: indicates the minimal number of counts that each individual sgRNA needs 
+    # to have in the controls (on average) in order to be included in the output.
+    min_reads: 30
+    
+    # Normalization method: 
+    # 1. 'ScalingByTotalReads' for scaling samples by total numbers or reads,
+    # 2. 'MedRatios' to use the median of ratios method 
+    # 3. Gene name for scaling samples by total number of reads of the guides targeting that gene.
+    norm_method: "MedRatios"
+
+    # The minimal number of different genes that the set of sgRNAs within a region of estimated 
+    # equal logFCs should target in order for theri logFCs to be corrected
+    min_genes: 3
+
+    # Experimental design: independent or paired
+    exp_design: "paired"
+    
+    # Extra parameters: They could be DNAcopy parameters.
+    extra: ""
+  
+  cnv_correction_qc:
+    
+    # Paramter to select lfc from positive or negative selection.
+    selection_type: "negative"
+
+  cnv_impact:
+  
+    # FDR threshold at which genes are called as significantly exerting a loss/gain-of-fitness effect.
+    fdr_cnv: 0.05
+
+  mageck_rra_NCT_qc:
+
+    # Normalization method: Median / Total
+    norm_method: "median"
+    
+    extra: "--normcounts-to-file"
+
+  mageck_rra_test:
+
+    # Normalization method: 
+    # It should be always "none" because normalization is performed previously.
+    norm_method: "none"
+
+    # Method to calculate log2FC at gene level from sgRNA values.
+    gene_lfc_method: "median" # Other values: "mean", "alphamedian", "alphamean", "secondbest"
+
+    # P adjust method.
+    p_adj_method: "fdr" # Other values: Holm's method (holm) and pound's method (pound)
+
+    # FDR P-value threshold for RRA in gene test. Default: 0.25
+    gene_fdr_thres: 0.05
+
+    # Remove sgRNAs whose mean value is 0 at different levels.
+    # Default: "both" to remove sgRNAs totally absent in all both groups.
+    remove_zero: "both"
+    
+    # Control condition
+    ctrl_cond: "T0"
+
+    # Treatment condition
+    treat_cond: "T25"
+
+    # Extra arguments for MAGECK test.
+    # Main extra parameters: --control-sgrna, --control-gene. --paired, --variance-estimation-samples, cnv related params
+    extra: "--paired"
+
+  mageck_mle_test:   
+    
+    # Normalization method: 
+    # It should be always "none" because normalization is performed previously.
+    norm_method: "none"
+
+    # P adjust method.
+    p_adj_method: "fdr" # Other values: Holm's method (holm) and pound's method (pound)
+
+    # Extra arguments for MAGECK MLE.
+    # Main extra parameters: --control-sgrna, --control-gene, CNV related parameters, sgRNA efficiency related information.
+    # As permutation round is suggested to 10 but it is 2 in default, it is set as extra
+    # --no-permutation-by-group: In homegeneous sgRNA libraries as Brunello.
+    extra: "--permutation-round 10 --sgrna-efficiency workflow/resources/mageck/broadgpp-brunello-library-sgrna-efficiency_2025_07_01.txt --update-efficiency" 
+  
+  # TODO: Evaluate if it should be incorporated.
+  #mageck_pathway:
+    # Extra arguments for MAGECK Pathway.
+  #  extra: ""
+  
+  # TODO: Evaluate if it should be incorporated.
+  #mageck_plot:
+    # Extra arguments for MAGECK Plot. 
+  #  extra: ""
+
+  # TODO: Planned.
+  bagel2_fc:
+
+    # Extra arguments for BAGEL2. 
+    extra: ""
+  
+  bagel2_bf:
+    
+    # BAGEL2 essential genes.
+    essential_genes: workflow/resources/bagel2/CEGv2.txt
+
+    # BAGEL2 non-essential genes.
+    non_essential_genes: workflow/resources/bagel2/NEGv1.txt
+
+    # Extra BAGEL2 BF parameters.
+    extra: ""
+
+  bagel2_pr:
+    
+    # Extra BAGEL2 PR parameters
+    extra: ""
+  
+
+  # TODO: Planned.
+  #hitselection:
+    # Extra arguments for HitSelection. 
+  #  extra: ""
+  
+  # TODO: Planned.
+  #drugz:
+    # Extra arguments for Drugz. 
+  #  extra: ""
+
+# Resources: Think about if resources should be specified here. Maybe just in case a cluster was 
+# used in this pipeline.
+
+resources:
+    default:
+        threads: 1
+        mem_mb:  4096
+        runtime: 10
+   
+    qc:
+        threads: 3
+        mem_mb:  2970
+        runtime: 10
+
+    trimming:
+        threads: 3
+        mem_mb: 5520
+        runtime: 10
+    
+    mageck_count_raw: 
+        threads: 1
+        mem_mb:  4096
+        runtime: 10
+    
+    filter_sgrna_counts:
+        threads: 1
+        mem_mb:  5520
+        runtime: 10
+
+    mageck_normalize: 
+        threads: 1
+        mem_mb:  5520
+        runtime: 10
+
+    cnv_correction:
+        threads: 1
+        mem_mb:  7096
+        runtime: 10
+
+    mageck_rra_test: # Multi-threads are not allowed in MAGECK test.
+        threads: 1
+        mem_mb:  7096
+        runtime: 10
+
+    mageck_mle_test: # Multi-threads are allowed in MAGECK RRA.
+        threads: 7
+        mem_mb:  5520
+        runtime: 10
+
+    bagel2_fc: # Multi-threads are not allowed in BAGEL2.
+        threads: 1
+        mem_mb:  4096
+        runtime: 10
+
+    bagel2_bf:
+        threads: 1 
+        mem_mb:  4096
+        runtime: 10
+
+    bagel2_pr:
+        threads: 1 
+        mem_mb:  4096
+        runtime: 10
