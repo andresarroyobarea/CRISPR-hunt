@@ -27,5 +27,6 @@ rule filter_sgrna_counts:
             --out-sgrna-removed {output.sgrna_removed} \
             --control-samples {params.ctrl_samples} \
             --treat-samples {params.treat_samples} \
-            --project {wildcards.project} \ {params.extra} &> {log} 
+            --project {wildcards.project} \ 
+            {params.extra} &> {log} 
         """
