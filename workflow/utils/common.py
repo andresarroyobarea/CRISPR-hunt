@@ -60,7 +60,7 @@ def get_count_table(project, mageck_test):
     mageck_norms = ["median", "total", "off-target", "non_essen_genes"]
 
     if mageck_test == "cnvcorr":
-        return "results/cnv_correction/{project}_cnvcorr.count_normalized.txt"
+        return "results/cnv_correction/{project}_cnvcorr.count.txt"
     elif mageck_test in mageck_norms:
         return "results/mageck_normalize/{mageck_test}/{project}_{mageck_test}.count_normalized.txt"
     else:
