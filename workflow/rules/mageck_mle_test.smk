@@ -14,7 +14,7 @@ rule mageck_mle_test:
         out_prefix=lambda wc: f"results/mageck_mle_test/{wc.mageck_test}/{wc.project}_{wc.mageck_test}",
         extra=config["parameters"]["mageck_mle_test"]["extra"],
     resources:
-        threads=get_resource("mageck_mle_test", "threads"),
+        threads=get_resource(config, "mageck_mle_test", "threads"),
     log:
         "logs/mageck_mle_test/{mageck_test}/{project}_{mageck_test}_mageck_mle_test.log",
     benchmark:
