@@ -12,6 +12,7 @@ parser$add_argument("--out-filter-report", help = "Report ", type = "character")
 parser$add_argument("--out-sgrna-removed", help = "Full description of sgRNA removed.", type = "character")
 parser$add_argument("--control-samples", help = "Control samples in the experimental design.", type = "character")
 parser$add_argument("--treat-samples", help = "Trteated/Second time samples in the experimental design.", type = "character")
+parser$add_argument("--min-avg-abund", help = "Minimal average abundance in control samples to keep the sgRNA.", type = "integer", default = 30)
 parser$add_argument("--project", help = "Label to use in results. Eg: Project name.", type = "character")
 parser$add_argument("--extra", help = "Extra parameters", type = "character")
 args <- parser$parse_args()
@@ -24,6 +25,7 @@ output_filter_report <- args$out_filter_report
 output_sgrna_removed <- args$out_sgrna_removed
 controls <- args$control_samples
 treated <- args$treat_samples
+min_avg_abund <- args$min_avg_abund
 project <- args$project
 extra <- args$extra
 
@@ -56,12 +58,12 @@ zero_counts <- sgRNA_counts %>% filter(rowSums(select(., -sgRNA, -Gene), na.rm =
 zero_counts_ctrl <- sgRNA_counts %>%
   filter(rowSums(select(., all_of(controls)), na.rm = T) == 0 & rowSums(select(., all_of(treated)), na.rm = TRUE) > 0)
 
-# 3.3 Indentify sgRNAs with mean abundance lower than 30 in control samples.
+# 3.3 Indentify sgRNAs with mean abundance lower than min_avg_abund in control samples.
 mean_lower_thres_ctrl <- sgRNA_counts %>%
   filter(rowSums(select(., -sgRNA, -Gene), na.rm = TRUE) > 0) %>%
   filter(!(rowSums(select(., all_of(controls)), na.rm = TRUE) == 0 & rowSums(select(., all_of(treated)), na.rm = TRUE) > 0)) %>%
   # TODO: Make the threshold a parameter.
-  filter(rowMeans(select(., all_of(controls)), na.rm = TRUE) < 30)
+  filter(rowMeans(select(., all_of(controls)), na.rm = TRUE) < min_avg_abund)
 
 
 # 3.4 Filter raw counts to remove sgRNAs with zero counts in all samples and in control samples.
@@ -82,7 +84,7 @@ write_lines(glue(
   "Total sgRNAs in library: {total_sgrnas}\n",
   "sgRNAs with 0 counts in all samples: {n_zero_all} ({round(n_zero_all / total_sgrnas * 100, 2)}%)\n",
   "sgRNAs with zero counts in all T0/Control samples but non-zero counts in any later sample: {n_zero_ctrl} ({round(n_zero_ctrl / total_sgrnas * 100, 2)}%)\n",
-  "sgRNAs with low abundance in T0/Control samples (mean abundance < 30): {n_mean_lower_thres_ctrl} ({round(n_mean_lower_thres_ctrl / total_sgrnas * 100, 2)}%)\n",
+  "sgRNAs with low abundance in T0/Control samples (mean abundance < min_avg_abund): {n_mean_lower_thres_ctrl} ({round(n_mean_lower_thres_ctrl / total_sgrnas * 100, 2)}%)\n",
   "sgRNAs after filtering: {n_after_filter} ({round(n_after_filter / total_sgrnas * 100, 2)}%)\n"
 ), output_filter_report)
 

@@ -12,6 +12,7 @@ rule filter_sgrna_counts:
         project=config["project"],
         ctrl_samples=",".join(ctrl_samples),
         treat_samples=",".join(treat_samples),
+        min_avg_abund=config["parameters"]["filter_sgrna_counts"]["min_avg_abund"],
         extra=config["parameters"]["filter_sgrna_counts"]["extra"],
     log:
         "logs/filter_sgrna_counts/{project}_{mageck_norms}_filter_sgrna_counts.log",
@@ -27,6 +28,7 @@ rule filter_sgrna_counts:
             --out-sgrna-removed {output.sgrna_removed} \
             --control-samples {params.ctrl_samples} \
             --treat-samples {params.treat_samples} \
+            --min-avg-abund {params.min_avg_abund} \
             --project {wildcards.project} \
             {params.extra} &> {log} 
         """
