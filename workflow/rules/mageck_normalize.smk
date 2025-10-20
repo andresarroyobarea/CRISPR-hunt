@@ -2,7 +2,7 @@ rule mageck_normalize:
     input:
         counts_filt="results/filter_sgrna_counts/{project}_processed.count.txt",
     output:
-        count_norm="results/mageck_normalize/{mageck_norms}/{project}_{mageck_norms}.counts_normalized.txt",
+        count_norm="results/mageck_normalize/{mageck_norms}/{project}_{mageck_norms}.count_normalized.txt",
         count_summary="results/mageck_normalize/{mageck_norms}/{project}_{mageck_norms}.countsummary.txt",
     conda:
         config["conda_envs"]["mageck"]
