@@ -2,7 +2,7 @@ rule cnv_correction:
     input:
         count_table_raw="results/filter_sgrna_counts/{project}_processed.count.txt",
     output:
-        count_table_cnv_norm="results/cnv_correction/{project}_cnvcorr.count_normalized.txt",
+        count_table_cnv_norm="results/cnv_correction/{project}_cnvcorr.count.txt",
         lfc_cnv_norm="results/cnv_correction/{project}_cnvcorr.foldchange",
     conda:
         config["conda_envs"]["crisprcleanR"]
