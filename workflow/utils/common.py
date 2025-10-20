@@ -31,7 +31,7 @@ def get_samples(df, *, included=None, batch=None, condition=None):
     
     return samples_subset
 
-def get_resource(rule,resource) -> int:
+def get_resource(config, rule, resource) -> int:
 	'''
     Retrieve resources for a given rule from config.
     Args:
@@ -57,12 +57,12 @@ def get_count_table(project, mageck_test):
             str: Path to the corresponding count table.
     """
 
-    mageck_norms = ["median", "total", "off-target", "non_essen_genes"]
+    mageck_norms = ["median", "total", "off_target", "non_essen_genes"]
 
     if mageck_test == "cnvcorr":
-        return "results/cnv_correction/{project}_cnvcorr.count.txt"
+        return f"results/cnv_correction/{project}_cnvcorr.count.txt"
     elif mageck_test in mageck_norms:
-        return "results/mageck_normalize/{mageck_test}/{project}_{mageck_test}.count_normalized.txt"
+        return f"results/mageck_normalize/{mageck_test}/{project}_{mageck_test}.count_normalized.txt"
     else:
         raise ValueError(f"Unknown mageck test option: {mageck_test}")
     
@@ -77,8 +77,8 @@ def get_lfc_file(project, norm_state):
             str: Path to the corresponding log fold change file.
     """
     if norm_state == "total":
-        return "results/bagel2_fc/{project}_total.foldchange"
+        return f"results/bagel2_fc/{project}_total.foldchange"
     elif norm_state == "cnvcorr":
-        return "results/cnv_correction/{project}_cnvcorr.foldchange"
+        return f"results/cnv_correction/{project}_cnvcorr.foldchange"
     else:
         raise ValueError(f"Unknown normalization method: {norm_state}")
