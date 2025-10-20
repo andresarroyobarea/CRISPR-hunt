@@ -41,9 +41,9 @@ rule bagel2_bf:
         treat_samples=",".join(treat_samples),
         extra=config["parameters"]["bagel2_bf"]["extra"],
     log:
-        "logs/bagel2_bf/{project}_{norm_state}_bagel2_bf.log",
+        "logs/bagel2/bagel2_bf/{project}_{norm_state}_bagel2_bf.log",
     benchmark:
-        "benchmarks/bagel2_bf/{project}_{norm_state}_bagel2_bf.log"
+        "benchmarks/bagel2/bagel2_bf/{project}_{norm_state}_bagel2_bf.log"
     shell:
         """
         BAGEL.py bf \
@@ -52,7 +52,31 @@ rule bagel2_bf:
             -e {input.essential_genes} \
             -n {input.non_essential_genes} \
             -c {params.treat_samples} \
-            {params.extra} 2> {log}
+            {params.extra} > {log} 2>&1
         """
 
 
+rule bagel2_pr:
+    input:
+        bayes_factors="results/bagel2_bf/{project}_{norm_state}.bf",
+        essential_genes=config["parameters"]["bagel2_bf"]["essential_genes"],
+        non_essential_genes=config["parameters"]["bagel2_bf"]["non_essential_genes"],
+    output:
+        prec_recall="results/bagel2_pr/{project}_{norm_state}-pr",
+    conda:
+        config["conda_envs"]["bagel2"]
+    params:
+        extra=config["parameters"]["bagel2_pr"]["extra"],
+    log:
+        "logs/bagel2/bagel2_pr/{project}_{norm_state}_bagel2_pr.log",
+    benchmark:
+        "benchmarks/bagel2/bagel2_pr/{project}_{norm_state}_bagel2_pr.bmk"
+    shell:
+        """
+        BAGEL.py pr \
+            -i {input.bayes_factors} \
+            -o {output.prec_recall} \
+            -e {input.essential_genes} \
+            -n {input.non_essential_genes} \
+            {params.extra} > {log} 2>&1
+        """
