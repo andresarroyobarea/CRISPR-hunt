@@ -78,7 +78,8 @@ design_matrix_filt.to_csv(design_matrix_filt_path, sep="\t", index=False)
 #print(design_matrix_filt)
 
 # Normalization status for BAGEL2
-bagel2_norms = ensure_raw_status(config.get("bagel2_norms", [""]))
+#bagel2_norms = ensure_raw_status(config.get("bagel2_norms", [""]))
+bagel2_norms = config.get("bagel2_norms", [""])
 
 # Normalization status for MAGECK count
 mageck_norms = config.get("mageck_norms", [""])
