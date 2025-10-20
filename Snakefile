@@ -2,7 +2,7 @@ import glob
 import os
 import sys
 import pandas as pd
-from workflow.utils.common import get_samples, get_resource, get_count_table, get_lfc_file, ensure_raw_status, get_count_table_to_norm
+from workflow.utils.common import get_samples, get_resource, get_count_table, get_lfc_file
 from snakemake.utils import min_version
 
 # ---- Snakemake minimal version ---- #
@@ -110,7 +110,8 @@ include: "workflow/rules/mageck_normalize.smk"
 if config["cnv_correction"].get("enabled", False):
 
     include: "workflow/rules/cnv_correction.smk"
-    include: "workflow/rules/cnv_correction_qc.smk"
+    #include: "workflow/rules/cnv_correction_qc.smk"
+    include: "workflow/rules/cnv_impact.smk"
 
 
 for method in config.get("essentiality_methods", []):
@@ -146,7 +147,7 @@ rule all:
             project=project,
         ),
         expand(
-            "results/mageck_normalize/{project}_{mageck_norms}.count_normalized.txt",
+            "results/mageck_normalize/{mageck_norms}/{project}_{mageck_norms}.count_normalized.txt",
             project=project,
             mageck_norms=mageck_norms,
         ),
@@ -159,60 +160,63 @@ rule all:
             project=project,
         ),
         expand(
-            "results/mageck_rra_test/{project}_{mageck_test}.gene_summary.txt",
+            "results/mageck_rra_test/{mageck_test}/{project}_{mageck_test}.sgrna_summary.txt",
             project=project,
             mageck_test=mageck_test,
         ),
         expand(
-            "results/mageck_rra_test/{project}_{mageck_test}.sgrna_summary.txt",
+            "results/mageck_rra_test/{mageck_test}/{project}_{mageck_test}.gene_summary.txt",
             project=project,
             mageck_test=mageck_test,
         ),
         expand(
-            "results/mageck_mle_test/{project}_{mageck_test}.sgrna_summary.txt",
+            "results/mageck_mle_test/{mageck_test}/{project}_{mageck_test}.sgrna_summary.txt",
             project=project,
             mageck_test=mageck_test,
         ),
         expand(
-            "results/mageck_mle_test/{project}_{mageck_test}.gene_summary.txt",
+            "results/mageck_mle_test/{mageck_test}/{project}_{mageck_test}.gene_summary.txt",
             project=project,
             mageck_test=mageck_test,
         ),
-        expand("results/cnv_correction_qc_rra/{project}_cnvcorr_rra_QC.pdf",
+        #expand(
+        #    "results/cnv_correction_qc_rra/{project}_cnvcorr_rra_QC.pdf",
+        #    project=project,
+        #),
+        #expand(
+        #    "results/cnv_correction_qc_mle/{project}_cnvcorr_mle_QC.pdf",
+        #    project=project,
+        #),
+        expand(
+            "results/cnv_impact/{mageck_norms}/{project}_{mageck_norms}_cnv_impact_corr_stats.xlsx",
             project=project,
+            mageck_norms=mageck_norms,
         ),
-        expand("results/cnv_correction_qc_mle/{project}_cnvcorr_mle_QC.pdf",
+        expand(
+            "results/cnv_impact/{mageck_norms}/{project}_{mageck_norms}_cnv_impact_corr_plots.pdf",
+            project=project,
+            mageck_norms=mageck_norms,
+        ),        
+        expand(
+            "results/bagel2_fc/{project}_total.foldchange",
             project=project,
         ),
         expand(
-            "results/bagel2_pr/{project}_{bagel2_norms}-pr",
+            "results/bagel2_fc/{project}_total.normed_readcount",
             project=project,
-            bagel2_norms=bagel2_norms,
+        ),
+        expand(
+            "results/bagel2_bf/{project}_{norm_state}.bf",
+            project=project,
+            norm_state=bagel2_norms,
+        ),
+        expand(
+            "results/bagel2_pr/{project}_{norm_state}-pr",
+            project=project,
+            norm_state=bagel2_norms,
         ), 
         expand(
-            "results/cnv_impact/{project}_{mageck_norms}_cnv_impact_corr_stats.xlsx",
-            project=project,
-            mageck_norms=mageck_norms,
-        ),
-        expand(
-            "results/cnv_impact/{project}_{mageck_norms}_cnv_impact_corr_plots.pdf",
-            project=project,
-            mageck_norms=mageck_norms,
-        ),
-        expand(
-            "results/bagel2_fc/{project}_raw.foldchange",
-            project=project,
-        ),
-        expand(
-            "results/bagel2_fc/{project}_raw.normed_readcount",
-            project=project,
-        ),
-        expand(
-            "results/bagel2_bf/{project}_{bagel2_norms}.bf",
-            project=project,
-            bagel2_norms=bagel2_norms,
-        ) ,
-        expand("results/filter_sgrna_counts/{project}_processed_NCT.count.txt",
+            "results/filter_sgrna_counts/{project}_processed_NCT.count.txt",
             project=project,
         ),
         expand(
