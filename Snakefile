@@ -80,9 +80,11 @@ design_matrix_filt.to_csv(design_matrix_filt_path, sep="\t", index=False)
 # Normalization status for BAGEL2
 #bagel2_norms = ensure_raw_status(config.get("bagel2_norms", [""]))
 bagel2_norms = config.get("bagel2_norms", [""])
+print("BAGEL2 normalization states to be used:", bagel2_norms)
 
 # Normalization status for MAGECK count
 mageck_norms = config.get("mageck_norms", [""])
+print("Normalization methods to be used:", mageck_norms)
 
 #print(mageck_norms)
 
@@ -91,6 +93,8 @@ mageck_test = [n for n in mageck_norms if n != "raw"]
 
 if config.get("cnv_correction", {}).get("enabled", False):
     mageck_test.append("cnvcorr")
+
+print("Tests to be performed:", mageck_test)
 
 # CNV impact comparisons
 #uncorr_norm = config["parameters"]["cnv_impact"][""]
@@ -188,14 +192,14 @@ rule all:
         #    project=project,
         #),
         expand(
-            "results/cnv_impact/{mageck_norms}/{project}_{mageck_norms}_cnv_impact_corr_stats.xlsx",
+            "results/cnv_impact/{mageck_test}/{project}_{mageck_test}_cnv_impact_plots.pdf",
             project=project,
-            mageck_norms=mageck_norms,
+            mageck_test=mageck_norms,
         ),
         expand(
-            "results/cnv_impact/{mageck_norms}/{project}_{mageck_norms}_cnv_impact_corr_plots.pdf",
+            "results/cnv_impact/{mageck_test}/{project}_{mageck_test}_cnv_impact_stats.xlsx",
             project=project,
-            mageck_norms=mageck_norms,
+            mageck_test=mageck_test,
         ),        
         expand(
             "results/bagel2_fc/{project}_total.foldchange",
