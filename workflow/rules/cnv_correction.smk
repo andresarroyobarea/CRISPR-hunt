@@ -2,7 +2,7 @@ rule cnv_correction:
     input: 
         count_table_raw="results/filter_sgrna_counts/{project}_processed.count.txt", 
     output: 
-        count_table_cnv_norm="results/cnv_correction/{project}_cnvcorr.count.txt", 
+        count_table_cnv_norm="results/cnv_correction/{project}_cnvcorr.count_normalized.txt", 
         lfc_cnv_norm="results/cnv_correction/{project}_cnvcorr.foldchange",
     conda: 
         config["conda_envs"]["crisprcleanR"] 
@@ -15,7 +15,8 @@ rule cnv_correction:
         treat_samples=",".join(treat_samples), 
         ctrl_samples=",".join(ctrl_samples), 
         exp_design=config["parameters"]["cnv_correction"]["exp_design"], 
-        project=config["project"], outdir=lambda wildcards, output: os.path.dirname(output.count_table_cnv_norm), 
+        project=config["project"], 
+        outdir=lambda wildcards, output: os.path.dirname(output.count_table_cnv_norm), 
         extra=config["parameters"]["cnv_correction"]["extra"], 
     log: 
         "logs/cnv_correction/{project}_cnvcorr.log", 
