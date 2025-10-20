@@ -33,7 +33,12 @@ def get_samples(df, *, included=None, batch=None, condition=None):
 
 def get_resource(rule,resource) -> int:
 	'''
-    Retrieve resources for a given rule from config. 	
+    Retrieve resources for a given rule from config.
+    Args:
+        rule (str): The name of the rule.
+        resource (str): The type of resource to retrieve (e.g., 'threads', 'mem_mb').
+    Returns:
+        int: The requested resource value. 	
     '''
 
 	try:
@@ -42,8 +47,6 @@ def get_resource(rule,resource) -> int:
 		print(f'Failed to resolve resource for {rule}/{resource}: using default parameters')
 		return config["resources"]['default'][resource]
       
-
-# TODO: CHEQUEAR TODO ESTO.
 def get_count_table(project, mageck_test):
     """Get the path to the count table based on the normalization/CNV correction method.
     
@@ -54,13 +57,29 @@ def get_count_table(project, mageck_test):
             str: Path to the corresponding count table.
     """
 
-    mageck_counts_norms = ["median", "total", "off-target", "non_essen_genes"]
+    mageck_norms = ["median", "total", "off-target", "non_essen_genes"]
 
     if mageck_test == "cnvcorr":
-        return f"results/cnv_correction/{project}_cnvcorr.count_normalized.txt"
-    elif mageck_test in mageck_counts_norms:
-        return f"results/mageck_normalize/{mageck_test}/{project}_{mageck_test}.count_normalized.txt"
+        return "results/cnv_correction/{project}_cnvcorr.count_normalized.txt"
+    elif mageck_test in mageck_norms:
+        return "results/mageck_normalize/{mageck_test}/{project}_{mageck_test}.count_normalized.txt"
     else:
         raise ValueError(f"Unknown mageck test option: {mageck_test}")
     
 # TODO: AÑADIR EL RESTO DE FUNCIONES
+def get_lfc_file(project, norm_state):
+
+    """Get the path to the log fold change file based on normalization state for BAGEL2.
+    
+        Args:
+            project (str): Project name.
+            norm_state (str): Normalization state, either "raw" or "cnvcorr".
+        Returns:
+            str: Path to the corresponding log fold change file.
+    """
+    if norm_state == "total":
+        return "results/bagel2_fc/{project}_total.foldchange"
+    elif norm_state == "cnvcorr":
+        return "results/cnv_correction/{project}_cnvcorr.foldchange"
+    else:
+        raise ValueError(f"Unknown normalization method: {norm_state}")
