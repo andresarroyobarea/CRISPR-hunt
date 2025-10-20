@@ -45,7 +45,7 @@ def get_resource(rule,resource) -> int:
 
 # TODO: CHEQUEAR TODO ESTO.
 def get_count_table(project, mageck_test):
-    """Get the path to the count table based on the MAGECK test type.
+    """Get the path to the count table based on the normalization/CNV correction method.
     
         Args:
             project (str): Project name.
@@ -57,9 +57,9 @@ def get_count_table(project, mageck_test):
     mageck_counts_norms = ["median", "total", "off-target", "non_essen_genes"]
 
     if mageck_test == "cnvcorr":
-        return f"results/cnv_correction/{project}_cnvcorr.count.txt"
+        return f"results/cnv_correction/{project}_cnvcorr.count_normalized.txt"
     elif mageck_test in mageck_counts_norms:
-        return f"results/mageck_normalize/{project}_{mageck_test}.count_normalized.txt"
+        return f"results/mageck_normalize/{mageck_test}/{project}_{mageck_test}.count_normalized.txt"
     else:
         raise ValueError(f"Unknown mageck test option: {mageck_test}")
     
