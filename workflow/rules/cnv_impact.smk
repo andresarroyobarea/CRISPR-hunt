@@ -3,8 +3,8 @@ rule cnv_impact:
         mageck_corr="results/mageck_rra_test/{project}_norm_cnv_correction_gene_summary.txt",
         mageck_uncorr="results/mageck_rra_test/{project}_{mageck_norms}_gene_summary.txt",
     output:
-        cnv_impact_stats="results/cnv_impact/{project}_{mageck_norms}_cnv_impact_stats.csv",
-        cnv_impact_plots="results/cnv_impact/{project}_{mageck_norms}_cnv_impact_plots.pdf",
+        cnv_impact_stats="results/cnv_impact/{mageck_norms}/{project}_{mageck_norms}_cnv_impact_stats.csv",
+        cnv_impact_plots="results/cnv_impact/{mageck_norms}/{project}_{mageck_norms}_cnv_impact_plots.pdf",
     conda:
         config["conda_envs"]["crisprcleanR"]
     params:
