@@ -4,16 +4,16 @@
 pacman::p_load(argparse, dplyr, tidyverse, glue)
 
 # Parse data
-parser <- ArgumentParser(description= 'sgRNA_preprocessing perform identification, filtering and reporting of low-abundant sgRNA.')
-parser$add_argument('--input', '-i', help = 'sgRNA raw counts file (TSV)', type = "character")
-parser$add_argument('--out-count-filt', help = 'sgRNA filtered counts (TSV)', type = "character")
-parser$add_argument('--out-count-filt-NCT', help = 'sgRNA filtered counts with off-target sgRNAs (TSV)', type = "character")
-parser$add_argument('--out-filter-report', help = 'Report ', type = 'character')
-parser$add_argument('--out-sgrna-removed', help = 'Full description of sgRNA removed.', type = 'character')
-parser$add_argument('--control-samples', help = 'Control samples in the experimental design.', type = "character")
-parser$add_argument('--treat-samples', help = 'Trteated/Second time samples in the experimental design.', type = "character")
-parser$add_argument('--project', help = 'Label to use in results. Eg: Project name.', type = "character")
-parser$add_argument('--extra', help = 'Extra parameters', type = "character")
+parser <- ArgumentParser(description = "sgRNA_preprocessing perform identification, filtering and reporting of low-abundant sgRNA.")
+parser$add_argument("--input", "-i", help = "sgRNA raw counts file (TSV)", type = "character")
+parser$add_argument("--out-count-filt", help = "sgRNA filtered counts (TSV)", type = "character")
+parser$add_argument("--out-count-filt-NCT", help = "sgRNA filtered counts with off-target sgRNAs (TSV)", type = "character")
+parser$add_argument("--out-filter-report", help = "Report ", type = "character")
+parser$add_argument("--out-sgrna-removed", help = "Full description of sgRNA removed.", type = "character")
+parser$add_argument("--control-samples", help = "Control samples in the experimental design.", type = "character")
+parser$add_argument("--treat-samples", help = "Trteated/Second time samples in the experimental design.", type = "character")
+parser$add_argument("--project", help = "Label to use in results. Eg: Project name.", type = "character")
+parser$add_argument("--extra", help = "Extra parameters", type = "character")
 args <- parser$parse_args()
 
 # Extract args
@@ -53,20 +53,20 @@ if (!identical(colnames(sgRNA_counts)[1:2], c("sgRNA", "Gene"))) {
 zero_counts <- sgRNA_counts %>% filter(rowSums(select(., -sgRNA, -Gene), na.rm = TRUE) == 0)
 
 # 3.2 Identify sgRNAs with zero counts in control samples and any counts in treated samples.
-zero_counts_ctrl <- sgRNA_counts %>% 
-    filter(rowSums(select(., all_of(controls)), na.rm = T) == 0 & rowSums(select(., all_of(treated)), na.rm = TRUE) > 0)
+zero_counts_ctrl <- sgRNA_counts %>%
+  filter(rowSums(select(., all_of(controls)), na.rm = T) == 0 & rowSums(select(., all_of(treated)), na.rm = TRUE) > 0)
 
 # 3.3 Indentify sgRNAs with mean abundance lower than 30 in control samples.
 mean_lower_thres_ctrl <- sgRNA_counts %>%
-    filter(rowSums(select(., -sgRNA, -Gene), na.rm = TRUE) > 0) %>%
-    filter(!(rowSums(select(., all_of(controls)), na.rm = TRUE) == 0 & rowSums(select(., all_of(treated)), na.rm = TRUE) > 0)) %>%
-    # TODO: Make the threshold a parameter.
-    filter(rowMeans(select(., all_of(controls)), na.rm = TRUE) < 30)
+  filter(rowSums(select(., -sgRNA, -Gene), na.rm = TRUE) > 0) %>%
+  filter(!(rowSums(select(., all_of(controls)), na.rm = TRUE) == 0 & rowSums(select(., all_of(treated)), na.rm = TRUE) > 0)) %>%
+  # TODO: Make the threshold a parameter.
+  filter(rowMeans(select(., all_of(controls)), na.rm = TRUE) < 30)
 
 
 # 3.4 Filter raw counts to remove sgRNAs with zero counts in all samples and in control samples.
-raw_counts_filt <- sgRNA_counts %>% 
-    filter(!sgRNA %in% c(zero_counts$sgRNA, zero_counts_ctrl$sgRNA, mean_lower_thres_ctrl$sgRNA))
+raw_counts_filt <- sgRNA_counts %>%
+  filter(!sgRNA %in% c(zero_counts$sgRNA, zero_counts_ctrl$sgRNA, mean_lower_thres_ctrl$sgRNA))
 
 
 # 4. Write general report for sgRNA filtering.
@@ -99,10 +99,10 @@ sgRNA_counts <- sgRNA_counts %>%
   ))
 
 # 5.2 Create full report of lost sgRNAs
-if (n_zero_all == 0 & n_zero_ctrl == 0 & n_mean_lower_thres_ctrl == 0){
+if (n_zero_all == 0 & n_zero_ctrl == 0 & n_mean_lower_thres_ctrl == 0) {
   message("No sgRNAs were filtered - OK!")
 } else {
-  filtering_report <- sgRNA_counts %>% 
+  filtering_report <- sgRNA_counts %>%
     filter(!is.na(lost_cause)) %>%
     group_by(Gene) %>%
     summarise(
@@ -111,7 +111,6 @@ if (n_zero_all == 0 & n_zero_ctrl == 0 & n_mean_lower_thres_ctrl == 0){
       lost_sgRNA_cause = str_c(lost_cause, collapse = ",")
     ) %>%
     arrange(desc(n_lost_sgRNAs))
-
 }
 
 # 6. Generate processed library file with and without control sgRNAs.
@@ -131,13 +130,13 @@ sgRNA_counts_processed_NCT <- sgRNA_counts %>%
 
 # 7.1 Export detailed sgRNA filtering report.
 if (exists("filtering_report")) {
-  write.table(filtering_report, output_sgrna_removed, sep="\t", row.names = FALSE, col.names = TRUE,  quote = FALSE)
+  write.table(filtering_report, output_sgrna_removed, sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 } else {
   write_lines("No sgRNAs were filtered - OK!", output_sgrna_removed)
 }
 
 # 7.2 Export filtered raw counts with control sgRNAs.
-write.table(sgRNA_counts_processed_NCT, output_count_filt_NCT, sep="\t", row.names = FALSE, col.names = TRUE,  quote = FALSE)
+write.table(sgRNA_counts_processed_NCT, output_count_filt_NCT, sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
 # 7.3 Export filtered raw counts without control sgRNAs.
-write.table(sgRNA_counts_processed, output_count_filt, sep="\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
+write.table(sgRNA_counts_processed, output_count_filt, sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
