@@ -15,7 +15,7 @@ rule mageck_rra_test:
         gene_fdr_thres = config["parameters"]["mageck_rra_test"]["gene_fdr_thres"],
         remove_zeros = config["parameters"]["mageck_rra_test"]["remove_zero"],
         extra = config["parameters"]["mageck_rra_test"]["extra"],
-        out_prefix=lambda wildcards, output: os.path.dirname(output.gene_summary), 
+        out_prefix=lambda wc: f"results/mageck_rra_test/{wc.mageck_test}/{wc.project}_{wc.mageck_test}",
     log:
         "logs/mageck_rra_test/{mageck_test}/{project}_{mageck_test}_mageck_rra_test.log",
     benchmark:
