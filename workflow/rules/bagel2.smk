@@ -32,8 +32,8 @@ rule bagel2_fc:
 rule bagel2_bf:
     input:
         fold_change=lambda wc: get_lfc_file(wc.project, wc.norm_state),
-        essential_genes=config["parameters"]["bagel2_bf"]["essential_genes"],
-        non_essential_genes=config["parameters"]["bagel2_bf"]["non_essential_genes"],
+        essential_genes=config["common_essentials"],
+        non_essential_genes=config["common_non_essentials"],
     output:
         bayes_factors="results/bagel2_bf/{project}_{norm_state}.bf",
     conda:
@@ -60,8 +60,8 @@ rule bagel2_bf:
 rule bagel2_pr:
     input:
         bayes_factors="results/bagel2_bf/{project}_{norm_state}.bf",
-        essential_genes=config["parameters"]["bagel2_bf"]["essential_genes"],
-        non_essential_genes=config["parameters"]["bagel2_bf"]["non_essential_genes"],
+        essential_genes=config["common_essentials"],
+        non_essential_genes=config["common_non_essentials"],
     output:
         prec_recall="results/bagel2_pr/{project}_{norm_state}-pr",
     conda:
