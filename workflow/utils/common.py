@@ -66,7 +66,6 @@ def get_count_table(project, mageck_test):
     else:
         raise ValueError(f"Unknown mageck test option: {mageck_test}")
     
-# TODO: AÑADIR EL RESTO DE FUNCIONES
 def get_lfc_file(project, norm_state):
 
     """Get the path to the log fold change file based on normalization state for BAGEL2.
