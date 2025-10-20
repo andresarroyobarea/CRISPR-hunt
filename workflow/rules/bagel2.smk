@@ -7,12 +7,12 @@ rule bagel2_fc:
     conda:
         config["conda_envs"]["bagel2"]
     params:
-        out_prefix=lambda wc: f"results/bagel2_fc/{wc.project}",
+        out_prefix=lambda wc: f"results/bagel2_fc/{wc.project}_total",
         ctrl_samples=",".join(ctrl_samples),
         pseudo_count=config["parameters"]["bagel2_fc"]["pseudo_count"],
         extra=config["parameters"]["bagel2_fc"]["extra"],
     resources:
-        threads=get_resource("bagel2_fc", "threads"),
+        threads=get_resource(config, "bagel2_fc", "threads"),
     log:
         "logs/bagel2/bagel2_fc/{project}_bagel2_fc.log",
     benchmark:
@@ -27,7 +27,6 @@ rule bagel2_fc:
             {params.extra} \
             > /dev/null 2>> {log}
         """
-
 
 rule bagel2_bf:
     input:
