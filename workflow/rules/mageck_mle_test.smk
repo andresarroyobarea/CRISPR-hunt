@@ -3,8 +3,8 @@ rule mageck_mle_test:
         count_table=lambda wc: get_count_table(wc.project, wc.mageck_test),
         design=design_matrix_filt_path,
     output:
-        sgrna_summary="results/mageck_mle_test/{mageck_test}/{project}_{mageck_test}_sgrna_summary.txt",
-        gene_summary="results/mageck_mle_test/{mageck_test}/{project}_{mageck_test}_gene_summary.txt",
+        sgrna_summary="results/mageck_mle_test/{mageck_test}/{project}_{mageck_test}.sgrna_summary.txt",
+        gene_summary="results/mageck_mle_test/{mageck_test}/{project}_{mageck_test}.gene_summary.txt",
     conda:
         config["conda_envs"]["mageck"]
     params:
