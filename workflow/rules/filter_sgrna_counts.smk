@@ -15,9 +15,9 @@ rule filter_sgrna_counts:
         min_avg_abund=config["parameters"]["filter_sgrna_counts"]["min_avg_abund"],
         extra=config["parameters"]["filter_sgrna_counts"]["extra"],
     log:
-        "logs/filter_sgrna_counts/{project}_{mageck_norms}_filter_sgrna_counts.log",
+        "logs/filter_sgrna_counts/{project}_filter_sgrna_counts.log",
     benchmark:
-        "benchmarks/filter_sgrna_counts/{project}_{mageck_norms}_filter_sgrna_counts.bmk"
+        "benchmarks/filter_sgrna_counts/{project}_filter_sgrna_counts.bmk"
     shell:
         """ 
         Rscript workflow/scripts/sgRNA_preprocessing.R \
