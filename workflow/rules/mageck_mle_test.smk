@@ -6,7 +6,7 @@ rule mageck_mle_test:
         sgrna_summary="results/mageck_mle_test/{mageck_test}/{project}_{mageck_test}_sgrna_summary.txt",
         gene_summary="results/mageck_mle_test/{mageck_test}/{project}_{mageck_test}_gene_summary.txt",
     conda:
-        config["conda_envs"]["mageck"],
+        config["conda_envs"]["mageck"]
     params:
         norm_method=config["parameters"]["mageck_mle_test"]["norm_method"],
         p_adj_method=config["parameters"]["mageck_mle_test"]["p_adj_method"],
@@ -18,7 +18,7 @@ rule mageck_mle_test:
     log:
         "logs/mageck_mle_test/{mageck_test}/{project}_{mageck_test}_mageck_mle_test.log",
     benchmark:
-        "benchmarks/mageck_mle_test/{mageck_test}/{project}_{mageck_test}_mageck_mle_test.bmk",
+        "benchmarks/mageck_mle_test/{mageck_test}/{project}_{mageck_test}_mageck_mle_test.bmk"
     shell:
         """
         mageck mle \

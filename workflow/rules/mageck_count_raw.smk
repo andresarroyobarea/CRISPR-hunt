@@ -1,6 +1,8 @@
 rule mageck_count_raw:
     input:
-        fastqs_trimmed=expand("results/trimming/{sample}_trimmed.fastq.gz", sample=SAMPLES),
+        fastqs_trimmed=expand(
+            "results/trimming/{sample}_trimmed.fastq.gz", sample=SAMPLES
+        ),
     output:
         count_table="results/mageck_count_raw/{project}.count.txt",
         count_summary="results/mageck_count_raw/{project}.countsummary.txt",

@@ -1,20 +1,20 @@
 rule mageck_rra_test:
     input:
-	    count_table=lambda wc: get_count_table(wc.project, wc.mageck_test),
+        count_table=lambda wc: get_count_table(wc.project, wc.mageck_test),
     output:
-        sgrna_summary = "results/mageck_rra_test/{mageck_test}/{project}_{mageck_test}_sgrna_summary.txt",
-        gene_summary = "results/mageck_rra_test/{mageck_test}/{project}_{mageck_test}_gene_summary.txt",
+        sgrna_summary="results/mageck_rra_test/{mageck_test}/{project}_{mageck_test}_sgrna_summary.txt",
+        gene_summary="results/mageck_rra_test/{mageck_test}/{project}_{mageck_test}_gene_summary.txt",
     conda:
         config["conda_envs"]["mageck"]
     params:
-        treat_samples = ",".join(treat_samples),
-        ctrl_samples = ",".join(ctrl_samples),
-        norm_method = config["parameters"]["mageck_rra_test"]["norm_method"],
-        gene_lfc_method = config["parameters"]["mageck_rra_test"]["gene_lfc_method"],
-        p_adj_method = config["parameters"]["mageck_rra_test"]["p_adj_method"],
-        gene_fdr_thres = config["parameters"]["mageck_rra_test"]["gene_fdr_thres"],
-        remove_zeros = config["parameters"]["mageck_rra_test"]["remove_zero"],
-        extra = config["parameters"]["mageck_rra_test"]["extra"],
+        treat_samples=",".join(treat_samples),
+        ctrl_samples=",".join(ctrl_samples),
+        norm_method=config["parameters"]["mageck_rra_test"]["norm_method"],
+        gene_lfc_method=config["parameters"]["mageck_rra_test"]["gene_lfc_method"],
+        p_adj_method=config["parameters"]["mageck_rra_test"]["p_adj_method"],
+        gene_fdr_thres=config["parameters"]["mageck_rra_test"]["gene_fdr_thres"],
+        remove_zeros=config["parameters"]["mageck_rra_test"]["remove_zero"],
+        extra=config["parameters"]["mageck_rra_test"]["extra"],
         out_prefix=lambda wc: f"results/mageck_rra_test/{wc.mageck_test}/{wc.project}_{wc.mageck_test}",
     log:
         "logs/mageck_rra_test/{mageck_test}/{project}_{mageck_test}_mageck_rra_test.log",
