@@ -19,6 +19,7 @@
 *.xlsx
 *.lock
 *.Rproj.user
+*.pyc
 
 # Folders
 benchmarks/
