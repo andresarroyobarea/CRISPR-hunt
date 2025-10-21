@@ -85,16 +85,18 @@ if (lib_type == "built-in") {
 
   # Validate format matches KY_Library_v1.0 structure
   required_cols <- c("CODE", "GENES", "EXONE", "CHRM", "STRAND", "STARTpos", "ENDpos", "seq")
-
-  if (!all(required_cols %in% colnames(sgrna_lib))) {
+  if (!all(required_cols %in% colnames(sgRNA_library))) {
     stop(paste0(
-      "Error: Custom library must follow the KY_Library_v1.0 format and have columns: ",
+      "Custom library must follow the KY_Library_v1.0 format and have columns: ",
       paste(required_cols, collapse = ", ")
     ))
   }
 } else {
   stop("Error: lib_type must be either 'custom' or 'built-in'.")
 }
+
+# TODO: Include in preprocessing steps R script
+rownames(sgRNA_library) <- sgRNA_library$CODE
 
 # =====================================
 # Apply CRISPRcleanR CNV correction
@@ -107,9 +109,10 @@ norm_and_fcs <- ccr.NormfoldChanges(
   min_reads = min_reads,
   EXPname = label,
   libraryAnnotation = sgRNA_library,
-  n_controls = n_controls,
-  display = TRUE,
-  method = norm_method
+  ncontrols = n_controls,
+  display = FALSE,
+  method = norm_method,
+  outdir = paste0(outdir, "/")
 )
 
 print("NORM FOLD CHANGES - OK!!!")
@@ -133,9 +136,9 @@ corrected_fcs <- ccr.GWclean(
   gwSortedFCs = gw_sorted_fcs,
   label = label,
   display = TRUE,
-  saveTO = TRUE,
+  saveTO = paste0(outdir, "/"),
   ignoredGenes = NULL,
-  min.ngenes = min_genes
+  min.ngenes = min_genes,
 )
 print("sgRNAs L2FC CORRECTION - OK!!!")
 
@@ -146,7 +149,7 @@ corrected_counts <- ccr.correctCounts(
   correctedFCs_and_segments = corrected_fcs,
   libraryAnnotation = sgRNA_library,
   minTargetedGenes = min_genes,
-  OutDir = outdir,
+  OutDir = paste0(outdir, "/"),
   ncontrols = n_controls,
 )
 
