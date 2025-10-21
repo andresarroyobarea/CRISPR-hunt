@@ -1,6 +1,6 @@
 rule mageck_rra_test:
     input:
-        count_table=lambda wc: get_count_table(wc.project, wc.mageck_test),
+        count_table=lambda wc: get_count_table_to_test(wc.project, wc.mageck_test),
     output:
         sgrna_summary="results/mageck_rra_test/{mageck_test}/{project}_{mageck_test}.sgrna_summary.txt",
         gene_summary="results/mageck_rra_test/{mageck_test}/{project}_{mageck_test}.gene_summary.txt",
