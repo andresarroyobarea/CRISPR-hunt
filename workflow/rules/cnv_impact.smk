@@ -16,7 +16,7 @@ rule cnv_impact:
         "benchmarks/cnv_impact/{project}_{mageck_norms}_cnv_correction_impact.bmk"
     shell:
         """
-        Rscript scripts/run_cnv_impact.R \
+        Rscript workflow/scripts/run_cnv_impact.R \
             --mageck-gene-summ-corr {input.mageck_corr} \
             --mageck-gene-summ-uncorr {input.mageck_uncorr} \
             --fdr-threshold {params.fdr_thres} \
