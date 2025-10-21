@@ -28,6 +28,7 @@ rule bagel2_fc:
             > /dev/null 2>> {log}
         """
 
+
 rule bagel2_bf:
     input:
         fold_change=lambda wc: get_lfc_file(wc.project, wc.norm_state),

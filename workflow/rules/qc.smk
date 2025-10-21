@@ -56,8 +56,12 @@ rule multiqc_raw:
 
 rule multiqc_trimmed:
     input:
-        fastqc_trimmed=expand("results/qc_trimming/{sample}/{sample}_trimmed_fastqc.html", sample=SAMPLES),
-        cutadapt_stats=expand("results/trimming/{sample}_trimmed.qc.txt", sample=SAMPLES),
+        fastqc_trimmed=expand(
+            "results/qc_trimming/{sample}/{sample}_trimmed_fastqc.html", sample=SAMPLES
+        ),
+        cutadapt_stats=expand(
+            "results/trimming/{sample}_trimmed.qc.txt", sample=SAMPLES
+        ),
     output:
         multiqc_report="results/qc_trimming/multiqc_report.html",
     params:

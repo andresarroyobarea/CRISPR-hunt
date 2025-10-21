@@ -1,16 +1,18 @@
 rule mageck_normalize:
     input:
-        processed_count=lambda wc: get_count_table_to_norm(wc.project,wc.mageck_norms),
+        processed_count=lambda wc: get_count_table_to_norm(wc.project, wc.mageck_norms),
     output:
         count_norm="results/mageck_normalize/{mageck_norms}/{project}_{mageck_norms}.count_normalized.txt",
         count_summary="results/mageck_normalize/{mageck_norms}/{project}_{mageck_norms}.countsummary.txt",
     conda:
         config["conda_envs"]["mageck"]
     params:
-        norm_method=lambda wc: config["parameters"]["mageck_normalize"][wc.mageck_norms][
-            "norm_method"
+        norm_method=lambda wc: config["parameters"]["mageck_normalize"][
+            wc.mageck_norms
+        ]["norm_method"],
+        extra=lambda wc: config["parameters"]["mageck_normalize"][wc.mageck_norms][
+            "extra"
         ],
-        extra=lambda wc: config["parameters"]["mageck_normalize"][wc.mageck_norms]["extra"],
         out_prefix=lambda wc: f"results/mageck_normalize/{wc.mageck_norms}/{wc.project}_{wc.mageck_norms}",
     log:
         "logs/mageck_normalize/{project}_{mageck_norms}_mageck_normalize.log",

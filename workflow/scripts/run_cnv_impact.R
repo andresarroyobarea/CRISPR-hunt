@@ -117,7 +117,6 @@ impact <- as.data.frame(cnv_corr_impact$impact)
 # Check each output object before saving
 # ---------------------------------------
 for (obj_name in c("res_stats", "gene_counts", "distorsion", "impact")) {
-  
   obj <- get(obj_name)
 
   if (is.null(obj)) {
