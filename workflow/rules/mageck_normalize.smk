@@ -1,6 +1,6 @@
 rule mageck_normalize:
     input:
-        processed_count="results/filter_sgrna_counts/{project}_processed.count.txt",
+        processed_count=lambda wc: get_count_table_to_norm(wc.project,wc.mageck_norms),
     output:
         count_norm="results/mageck_normalize/{mageck_norms}/{project}_{mageck_norms}.count_normalized.txt",
         count_summary="results/mageck_normalize/{mageck_norms}/{project}_{mageck_norms}.countsummary.txt",
