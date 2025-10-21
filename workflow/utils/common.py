@@ -47,7 +47,7 @@ def get_resource(config, rule, resource) -> int:
 		print(f'Failed to resolve resource for {rule}/{resource}: using default parameters')
 		return config["resources"]['default'][resource]
       
-def get_count_table(project, mageck_test):
+def get_count_table_to_test(project, mageck_test):
     """Get the path to the count table based on the normalization/CNV correction method.
     
         Args:
@@ -65,6 +65,30 @@ def get_count_table(project, mageck_test):
         return f"results/mageck_normalize/{mageck_test}/{project}_{mageck_test}.count_normalized.txt"
     else:
         raise ValueError(f"Unknown mageck test option: {mageck_test}")
+    
+
+def get_count_table_to_norm(project, mageck_norms):
+    
+    """
+     Get the path to the count table to be normalized based on the normalization method. 
+     Its applyed to avoid include sgRNA off-target when they are not needed.
+     
+        Args:
+            project (str): Project name.
+            mageck_norms (str): Type of MAGECK normalization method.
+        Returns:
+            str: Path to the corresponding count table to normalize.
+    """
+    
+    mageck_counts_norms = ["median", "total", "off_target", "non_essen_genes"]
+
+    if mageck_norms == "off_target":
+        return f"results/filter_sgrna_counts/{project}_processed_NCT.count.txt"
+    elif mageck_norms in ["median", "total", "non_essen_genes"]:
+        return f"results/filter_sgrna_counts/{project}_processed.count.txt"
+    else:
+        raise ValueError(f"Unknown mageck normalization method: {mageck_norms}")
+
     
 def get_lfc_file(project, norm_state):
 
