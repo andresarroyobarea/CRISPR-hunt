@@ -72,10 +72,12 @@ if (!file.exists(corr_res)) {
 
 cat("[INFO] Running CNV impact analysis for", label, "\n")
 
+
 # ------------------------------
 # Create PDF for plots
 # ------------------------------
 pdf(out_plot, width = 6, height = 6)
+
 
 # ------------------------------
 # Assess CNV correction impact
@@ -91,6 +93,7 @@ cnv_corr_impact <- ccr.impactOnPhenotype(
 dev.off()
 
 cat("[INFO] CNV impact analysis for", label, "finished: STATUS OK\n")
+
 
 # ------------------------------
 # Extract numeric outputs
@@ -108,6 +111,27 @@ distorsion <- as.data.frame(cnv_corr_impact$distorsion)
 
 # Genes whose fitness effect has been attenuated by CNV correction
 impact <- as.data.frame(cnv_corr_impact$impact)
+
+
+# ---------------------------------------
+# Check each output object before saving
+# ---------------------------------------
+for (obj_name in c("res_stats", "gene_counts", "distorsion", "impact")) {
+  
+  obj <- get(obj_name)
+
+  if (is.null(obj)) {
+    cat("[WARN]", obj_name, "no tiene resultados disponibles (NULL)\n")
+    obj <- data.frame(Mensaje = paste("No hay resultados para", obj_name))
+  } else if (!is.data.frame(obj)) {
+    obj <- tryCatch(as.data.frame(obj), error = function(e) {
+      cat("[WARN]", obj_name, "no pudo convertirse a data.frame\n")
+      data.frame(Mensaje = paste("No hay resultados válidos para", obj_name))
+    })
+  }
+
+  assign(obj_name, obj)
+}
 
 # ------------------------------
 # Collect all outputs
