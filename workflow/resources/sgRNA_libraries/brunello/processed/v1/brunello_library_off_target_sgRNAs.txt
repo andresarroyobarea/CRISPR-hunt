@@ -1,4 +1,3 @@
-sgRNAID
 Non-Targeting_Control_76442
 Non-Targeting_Control_76443
 Non-Targeting_Control_76444
