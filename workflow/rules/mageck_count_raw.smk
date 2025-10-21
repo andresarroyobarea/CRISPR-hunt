@@ -20,10 +20,10 @@ rule mageck_count_raw:
         "benchmarks/mageck_count_raw/{project}_mageck_count_raw.bmk"
     shell:
         """
-        mageck count --list-seq "{params.library_file}" \
+        mageck count --list-seq {params.library_file} \
             --fastq {input.fastqs_trimmed} \
             --norm-method none \
-            --sample-label "{params.sample_labels}" \
-            --output-prefix "{params.label}" \
-            {params.extra} 2> "{log}"
+            --sample-label {params.sample_labels} \
+            --output-prefix {params.label} \
+            {params.extra} 2> {log}
         """
