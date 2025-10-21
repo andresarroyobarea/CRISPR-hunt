@@ -19,7 +19,7 @@ rule bagel2_fc:
         "benchmarks/bagel2/bagel2_fc/{project}_bagel2_fc.bmk"
     shell:
         """
-        BAGEL.py fc \
+        workflow/scripts/BAGEL.py fc \
             -i {input.processed_count} \
             -o {params.out_prefix} \
             -c {params.ctrl_samples} \
@@ -46,7 +46,7 @@ rule bagel2_bf:
         "benchmarks/bagel2/bagel2_bf/{project}_{norm_state}_bagel2_bf.log"
     shell:
         """
-        BAGEL.py bf \
+        workflow/scripts/BAGEL.py bf \
             -i {input.fold_change} \
             -o {output.bayes_factors} \
             -e {input.essential_genes} \
@@ -73,7 +73,7 @@ rule bagel2_pr:
         "benchmarks/bagel2/bagel2_pr/{project}_{norm_state}_bagel2_pr.bmk"
     shell:
         """
-        BAGEL.py pr \
+        workflow/scripts/BAGEL.py pr \
             -i {input.bayes_factors} \
             -o {output.prec_recall} \
             -e {input.essential_genes} \
