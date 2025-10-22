@@ -35,35 +35,46 @@ rule bagel2_bf:
         essential_genes=config["common_essentials"],
         non_essential_genes=config["common_non_essentials"],
     output:
-        bayes_factors="results/bagel2_bf/{project}_{norm_state}.bf",
+        bf_gene="results/bagel2_bf/gene_level/{project}_{norm_state}_gene.bf",
+        bf_sgrna="results/bagel2_bf/sgrna_level/{project}_{norm_state}_sgrna.bf",
     conda:
         config["conda_envs"]["bagel2"]
     params:
         treat_samples=",".join(treat_samples),
         extra=config["parameters"]["bagel2_bf"]["extra"],
     log:
-        "logs/bagel2/bagel2_bf/{project}_{norm_state}_bagel2_bf.log",
+        log_gene = "logs/bagel2/bagel2_bf/gene_level/{project}_{norm_state}_bagel2_bf.log",
+        log_sgrna = "logs/bagel2/bagel2_bf/sgrna_level/{project}_{norm_state}_bagel2_bf.log",
     benchmark:
-        "benchmarks/bagel2/bagel2_bf/{project}_{norm_state}_bagel2_bf.log"
+        "benchmarks/bagel2/bagel2_bf/{project}_{norm_state}_bagel2_bf.log",
     shell:
         """
         workflow/scripts/BAGEL.py bf \
             -i {input.fold_change} \
-            -o {output.bayes_factors} \
+            -o {output.bf_gene} \
             -e {input.essential_genes} \
             -n {input.non_essential_genes} \
             -c {params.treat_samples} \
-            {params.extra} > {log} 2>&1
+            {params.extra} > {log.log_gene} 2>&1
+
+        workflow/scripts/BAGEL.py bf \
+            -i {input.fold_change} \
+            -o {output.bf_sgrna} \
+            -e {input.essential_genes} \
+            -n {input.non_essential_genes} \
+            -c {params.treat_samples} \
+            -r \
+            {params.extra} > {log.log_sgrna} 2>&1
         """
 
 
 rule bagel2_pr:
     input:
-        bayes_factors="results/bagel2_bf/{project}_{norm_state}.bf",
+        bf_gene="results/bagel2_bf/gene_level/{project}_{norm_state}_gene.bf",
         essential_genes=config["common_essentials"],
         non_essential_genes=config["common_non_essentials"],
     output:
-        prec_recall="results/bagel2_pr/{project}_{norm_state}-pr",
+        prec_recall="results/bagel2_pr/gene_level/{project}_{norm_state}-pr",
     conda:
         config["conda_envs"]["bagel2"]
     params:
@@ -75,7 +86,7 @@ rule bagel2_pr:
     shell:
         """
         workflow/scripts/BAGEL.py pr \
-            -i {input.bayes_factors} \
+            -i {input.bf_gene} \
             -o {output.prec_recall} \
             -e {input.essential_genes} \
             -n {input.non_essential_genes} \
