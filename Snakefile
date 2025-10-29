@@ -2,7 +2,13 @@ import glob
 import os
 import sys
 import pandas as pd
-from workflow.utils.common import get_samples, get_resource, get_count_table, get_lfc_file
+from workflow.utils.common import (
+    get_samples,
+    get_resource,
+    get_count_table_to_norm,
+    get_count_table_to_test,
+    get_lfc_file,
+)
 from snakemake.utils import min_version
 
 # ---- Snakemake minimal version ---- #
@@ -40,7 +46,7 @@ SAMPLES = get_samples(
     condition=sample_filters.get("condition"),
 )
 
-#print("Muestras seleccionadas:",SAMPLES)
+# print("Muestras seleccionadas:",SAMPLES)
 
 # Conditions
 # Filtered samples
@@ -68,25 +74,23 @@ ctrl_samples = (
 design = config["design"]
 design_matrix = pd.read_csv(design, sep="\t", index_col=False)
 
-#print(design_matrix.columns)
+# print(design_matrix.columns)
 
-design_matrix_filt = design_matrix[design_matrix["Samples"].isin(SAMPLES)]
-design_matrix_filt_path = "workflow/resources/design_matrix_filtered.txt"
+design_matrix_filt = design_matrix[design_matrix["sample"].isin(SAMPLES)]
+design_matrix_filt_path = "workflow/resources/design_matrix/design_matrix_filtered.tsv"
 design_matrix_filt.to_csv(design_matrix_filt_path, sep="\t", index=False)
 
-#print(df_samples_fil)
-#print(design_matrix_filt)
+# print(df_samples_fil)
+# print(design_matrix_filt)
 
 # Normalization status for BAGEL2
-#bagel2_norms = ensure_raw_status(config.get("bagel2_norms", [""]))
+# bagel2_norms = ensure_raw_status(config.get("bagel2_norms", [""]))
 bagel2_norms = config.get("bagel2_norms", [""])
-print("BAGEL2 normalization states to be used:", bagel2_norms)
 
 # Normalization status for MAGECK count
 mageck_norms = config.get("mageck_norms", [""])
-print("Normalization methods to be used:", mageck_norms)
 
-#print(mageck_norms)
+# print(mageck_norms)
 
 # MAGECK RRA / MLE tests
 mageck_test = [n for n in mageck_norms if n != "raw"]
@@ -94,10 +98,9 @@ mageck_test = [n for n in mageck_norms if n != "raw"]
 if config.get("cnv_correction", {}).get("enabled", False):
     mageck_test.append("cnvcorr")
 
-print("Tests to be performed:", mageck_test)
-
 # CNV impact comparisons
-#uncorr_norm = config["parameters"]["cnv_impact"][""]
+# uncorr_norm = config["parameters"]["cnv_impact"][""]
+
 
 # ---- RULE MODULES ---- #
 include: "workflow/rules/qc.smk"
@@ -107,14 +110,16 @@ if config["parameters"]["trimming"].get("enabled", False):
 
     include: "workflow/rules/trimming.smk"
 
+
 include: "workflow/rules/mageck_count_raw.smk"
 include: "workflow/rules/filter_sgrna_counts.smk"
 include: "workflow/rules/mageck_normalize.smk"
 
+
 if config["cnv_correction"].get("enabled", False):
 
     include: "workflow/rules/cnv_correction.smk"
-    #include: "workflow/rules/cnv_correction_qc.smk"
+    # include: "workflow/rules/cnv_correction_qc.smk"
     include: "workflow/rules/cnv_impact.smk"
 
 
@@ -192,15 +197,15 @@ rule all:
         #    project=project,
         #),
         expand(
-            "results/cnv_impact/{mageck_test}/{project}_{mageck_test}_cnv_impact_plots.pdf",
+            "results/cnv_impact/{mageck_norms}/{project}_{mageck_norms}_cnv_impact_stats.xlsx",
             project=project,
-            mageck_test=mageck_norms,
+            mageck_norms=mageck_norms,
         ),
         expand(
-            "results/cnv_impact/{mageck_test}/{project}_{mageck_test}_cnv_impact_stats.xlsx",
+            "results/cnv_impact/{mageck_norms}/{project}_{mageck_norms}_cnv_impact_plots.pdf",
             project=project,
-            mageck_test=mageck_test,
-        ),        
+            mageck_norms=mageck_norms,
+        ),
         expand(
             "results/bagel2_fc/{project}_total.foldchange",
             project=project,
@@ -210,15 +215,20 @@ rule all:
             project=project,
         ),
         expand(
-            "results/bagel2_bf/{project}_{norm_state}.bf",
+            "results/bagel2_bf/gene_level/{project}_{norm_state}_gene.bf",
             project=project,
             norm_state=bagel2_norms,
         ),
         expand(
-            "results/bagel2_pr/{project}_{norm_state}-pr",
+            "results/bagel2_bf/sgrna_level/{project}_{norm_state}_sgrna.bf",
             project=project,
             norm_state=bagel2_norms,
-        ), 
+        ),
+        expand(
+            "results/bagel2_pr/gene_level/{project}_{norm_state}-pr",
+            project=project,
+            norm_state=bagel2_norms,
+        ),
         expand(
             "results/filter_sgrna_counts/{project}_processed_NCT.count.txt",
             project=project,
@@ -230,4 +240,4 @@ rule all:
         expand(
             "results/cnv_correction/{project}_cnvcorr.foldchange",
             project=project,
-        )
+        ),
