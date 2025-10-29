@@ -26,9 +26,7 @@ def get_samples(df, *, included=None, batch=None, condition=None):
         filtered_df = filtered_df[filtered_df['condition'] == condition]
     
     samples_subset = filtered_df['sample'].tolist()
-    
-    print("Samples selected based on criteria:", samples_subset)
-    
+        
     return samples_subset
 
 def get_resource(config, rule, resource) -> int:
