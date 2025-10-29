@@ -20,11 +20,12 @@ logdir: "logs"
 project: "RICHTER_CRISPRscreen"
 
 # Paths to resources files
-library_file: workflow/resources/sgRNA_libraries/processed/broadgpp-brunello-library-contents_MAGECK_prepared_2025_07_23.txt
-cnv_value_file: workflow/resources/CNV_value.tsv
-deepmap_core_essentials:  workflow/resources/deepmap/CRISPRInferredCommonEssentials_2025_08_08.csv
-achilles_common_essentials: workflow/resources/deepmap/AchillesCommonEssentialControls_2025_08_08.csv
-achilles_non_essentials: workflow/resources/deepmap/AchillesNonessentialControls_2025_08_08.csv
+library_file: workflow/resources/sgRNA_libraries/brunello/processed/v2/brunello_library_MAGECK.txt
+#cnv_value_file: workflow/resources/CNV_value.tsv
+common_essentials: workflow/resources/gene_lists/essentials/processed/common_essentials_processed.tsv
+common_non_essentials: workflow/resources/gene_lists/non_essentials/processed/common_non_essentials_processed.tsv
+#achilles_common_essentials: workflow/resources/deepmap/AchillesCommonEssentialControls_2025_08_08.csv
+#achilles_non_essentials: workflow/resources/deepmap/AchillesNonessentialControls_2025_08_08.csv
 
 # Sample filtering
 sample_filters:
@@ -59,24 +60,28 @@ cnv_correction:
 # This represent the different normalization status for MAGECK.
 # norm_cnv_correction should be addedd ONLY when cnv_correction["enabled"] = True
 mageck_norms:  # norm_state
-  - control
+  - median
+  - off_target
+  - non_essen_genes
   
 # This represent the different normalization status for MAGECK.
 # norm_cnv_correction should be addedd ONLY when cnv_correction["enabled"] = True
 bagel2_norms:
+  - total
   - cnvcorr
 
 # To choose the testing method/s to run.
 essentiality_methods:
   - mageck_rra
   - mageck_mle
+  - bagel2
 
 # Parameters
 parameters:
 
   qc:
 
-    extra: "--adapters workflow/resources/trimming/adapter_list.txt"
+    extra: "--adapters workflow/resources/FastQC/adapter_list.txt"
 
   # Activate when UMIs are used in the sequencing procedure
   umi_processing:
@@ -129,12 +134,20 @@ parameters:
       extra: ""
 
   # Parameters for negative control normalization in MAGECK
-    control:
+    off_target:
 
       norm_method: "control"
 
-      extra: "--control-sgrna workflow/resources/sgRNA_libraries/processed/broadgpp-brunello-library-BAGEL2_neg_ctrl_sgrna_2025_07_23.txt"
+      extra: "--control-sgrna workflow/resources/sgRNA_libraries/brunello/processed/v2/brunello_library_off_target_sgRNAs.txt"
   
+  # Parameters for negative control normalization in MAGECK
+    non_essen_genes:
+
+      norm_method: "control"
+
+      extra: "--control-sgrna workflow/resources/sgRNA_libraries/brunello/processed/v2/brunello_library_non_essentials_sgRNAs.txt"
+  
+
   # Parameters for negative total normalization in MAGECK
     total:
 
@@ -148,7 +161,7 @@ parameters:
     library_type: "custom"
 
     # CRISPRcleanR input library
-    sgrna_library: "workflow/resources/sgRNA_libraries/processed/broadgpp-brunello-library-contents_CRISPRcleanR_prepared_2025_07_01.txt"
+    sgrna_library: "workflow/resources/sgRNA_libraries/brunello/processed/v2/brunello_library_CRISPRcleanR.txt"
     
     # Minimal sgRNA reads: indicates the minimal number of counts that each individual sgRNA needs 
     # to have in the controls (on average) in order to be included in the output.
@@ -216,7 +229,10 @@ parameters:
     # Main extra parameters: --control-sgrna, --control-gene. --paired, --variance-estimation-samples, cnv related params
     extra: "--paired"
 
-  mageck_mle_test:   
+  mageck_mle_test:
+
+    # Design matrix filtered
+    design_matrix: "workflow/resources/design_matrix/design_matrix_filtered.txt"  
     
     # Normalization method: 
     # It should be always "none" because normalization is performed previously.
@@ -229,7 +245,7 @@ parameters:
     # Main extra parameters: --control-sgrna, --control-gene, CNV related parameters, sgRNA efficiency related information.
     # As permutation round is suggested to 10 but it is 2 in default, it is set as extra
     # --no-permutation-by-group: In homegeneous sgRNA libraries as Brunello.
-    extra: "--permutation-round 10 --sgrna-efficiency workflow/resources/mageck/broadgpp-brunello-library-sgrna-efficiency_2025_07_01.txt --update-efficiency" 
+    extra: "--permutation-round 10 --sgrna-efficiency workflow/resources/sgRNA_efficiency/brunello/brunello_library_sgRNA_efficiency_SCC.out --sgrna-eff-name-column 1 --sgrna-eff-score-column 3 --update-efficiency" 
   
   # TODO: Evaluate if it should be incorporated.
   #mageck_pathway:
@@ -244,24 +260,21 @@ parameters:
   # TODO: Planned.
   bagel2_fc:
 
+    # Pseudo count to add to each sgRNA read count to avoid log2(0).
+    pseudo_count: 1    
+
     # Extra arguments for BAGEL2. 
     extra: ""
   
   bagel2_bf:
     
-    # BAGEL2 essential genes.
-    essential_genes: workflow/resources/bagel2/CEGv2.txt
-
-    # BAGEL2 non-essential genes.
-    non_essential_genes: workflow/resources/bagel2/NEGv1.txt
-
     # Extra BAGEL2 BF parameters.
-    extra: ""
+    extra: "-w workflow/resources/network_files/STRING/processed/human_protein_network_STRING_processed.txt -m --align-info workflow/resources/alignment_info/brunello_bagel2_alignment_info.txt -b -s 1234 -N 15"
 
   bagel2_pr:
     
     # Extra BAGEL2 PR parameters
-    extra: ""
+    extra: "-k BoostedBF"
   
 
   # TODO: Planned.
